@@ -1,0 +1,12 @@
+name: histoTIL
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - cudnn=8.1.0
+  - cudatoolkit=11.2
+  - python-utils
+  - opencv
+  - pillow
+prefix: /home/maberyick/anaconda3/envs/histoTIL
