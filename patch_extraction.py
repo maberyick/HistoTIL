@@ -44,7 +44,7 @@ def startPatchExtraction(ind, files, args):
     slide = open_slide(slideFname)
     dz = deepzoom.DeepZoomGenerator(slide, tile_size=args.tile_size, overlap=0, limit_bounds=True)
     # Size of the smallest size from the WSI to be used for tracking the extraction of patches
-    maskLevel = max(slide.level_downsamples)
+    maskLevel = slide.level_downsamples[-args.visual_size]
 
     mask_tile_size = args.tile_size*slide.level_downsamples[args.mag_level]//maskLevel
     dzLevel = dz.level_count-args.mag_level-1
@@ -52,12 +52,14 @@ def startPatchExtraction(ind, files, args):
     mask = cv2.imread(maskFname)
     mask = Image.fromarray(mask).convert("L")
     #mask_org_size = mask.size
-    mask = mask.resize(min(slide.level_dimensions))
+    # size of the chosen mask
+    slide_siz = slide.level_dimensions[-args.visual_size]
+    mask = mask.resize(slide_siz)
     fn = lambda x : 1 if x > 0 else 0
     mask = mask.point(fn, mode='1')
     
     # get slide thumbnail
-    img_patch = slide.get_thumbnail(min(slide.level_dimensions))
+    img_patch = slide.get_thumbnail(slide_siz)
     img_patches = ImageDraw.Draw(img_patch)    
     
     # counter ids
@@ -136,6 +138,7 @@ parser.add_argument('--min_cellular_density', type=float, default=0.4, help='Min
 parser.add_argument('--max_worker', type=int, default=16, help='Number of cores to be used')
 parser.add_argument('--tile_size', type=int, default=2048, help='Size of the patch in pixels (e.g. 20048x2048)')
 parser.add_argument('--mag_level', type=int, default=0, help='Mag. level of the image (For 40x:0, For 20x:1, For 10x:2, For 5x:3)')
+parser.add_argument('--visual_size', type=int, default=1, help='Relative size of the visual patch summary (1 = small, 2 = medium, 3 = big, 4 = large')
 parser.add_argument('--start_ind', type=int, default=0, help='Index to start the process (0 start from the first wsi image)')
 parser.add_argument('--end_ind', type=int, default=-1, help='Index to end the process (-1 ends at the last wsi image)')
 

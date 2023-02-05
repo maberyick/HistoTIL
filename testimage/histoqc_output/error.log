@@ -1,1 +1,7 @@
-2023-02-03 16:51:35,541 - WARNING - Configuration file v2.1 assuming to be a template...checking.
+2023-02-05 13:54:04,957 - WARNING - Configuration file v2.1 assuming to be a template...checking.
+2023-02-05 13:54:05,879 - WARNING - 2016909224.tif - Unknown base magnification for file
+2023-02-05 13:54:07,439 - WARNING - 2016909224.tif - After BlurDetectionModule.identifyBlurryRegions NO tissue remains detectable! Downstream modules likely to be incorrect/fail
+2023-02-05 13:54:07,452 - WARNING - 2016909224.tif - After BasicModule.finalProcessingSpur NO tissue remains detectable! Downstream modules likely to be incorrect/fail
+2023-02-05 13:54:07,457 - WARNING - 2016909224.tif - After BasicModule.finalProcessingArea NO tissue remains detectable! Downstream modules likely to be incorrect/fail
+2023-02-05 13:54:07,505 - WARNING - 2016909224.tif - HistogramModule.compareToTemplates NO tissue remains detectable in mask!
+2023-02-05 13:54:07,846 - ERROR - /home/maberyick/CCIPD_Research/Github/HistoTIL/testimage/wsi/2016909224.tif - Error analyzing file (skipping): 	 <class 'ValueError'> Inappropriate argument value (of correct type). a must be greater than 0 unless no samples are taken
