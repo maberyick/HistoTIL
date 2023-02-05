@@ -12,11 +12,11 @@ dependencies:
   - scikit-image
   - spyder-kernels=2.3
   - pandas
-  -pip:
-   - dill==0.3.3
-   - openslide-python==1.1.2
-   - importlib-resources
-   - openslide-python==1.1.2
-   - scikit-learn==0.24.1
-   - scikit-image==0.18.1
-   - scipy==1.6.1
+  - pip:
+    - dill==0.3.3
+     - openslide-python==1.1.2
+    - importlib-resources
+    - openslide-python==1.1.2
+    - scikit-learn==0.24.1
+    - scikit-image==0.18.1
+    - scipy==1.6.1
