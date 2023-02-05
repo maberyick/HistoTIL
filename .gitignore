@@ -48,3 +48,17 @@ models/model_nuclei/results/nuclei.png
 models/model_nuclei/results/test_nuclei.png
 models/model_nuclei/utils.py
 models/model_nuclei/utils_tmp.py
+testimage/epimask/2016909224/2016909224_r2048_c2048.png
+testimage/epimask/2016909224/2016909224_r4096_c10240.png
+testimage/epimask/2016909224/2016909224_r4096_c2048.png
+testimage/epimask/2016909224/2016909224_r6144_c2048.png
+testimage/epimask/2016909224/2016909224_r6144_c8192.png
+testimage/epimask/2016909224/2016909224_r8192_c2048.png
+testimage/epimask/2016909224/2016909224_r8192_c8192.png
+testimage/nucleimask/2016909224/2016909224_r2048_c2048.png
+testimage/nucleimask/2016909224/2016909224_r4096_c10240.png
+testimage/nucleimask/2016909224/2016909224_r4096_c2048.png
+testimage/nucleimask/2016909224/2016909224_r6144_c2048.png
+testimage/nucleimask/2016909224/2016909224_r6144_c8192.png
+testimage/nucleimask/2016909224/2016909224_r8192_c2048.png
+testimage/nucleimask/2016909224/2016909224_r8192_c8192.png
