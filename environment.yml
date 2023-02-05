@@ -19,4 +19,4 @@ dependencies:
    - openslide-python==1.1.2
    - scikit-learn==0.24.1
    - scikit-image==0.18.1
-   - install scipy==1.6.1
+   - scipy==1.6.1
