@@ -9,4 +9,7 @@ dependencies:
   - python-utils
   - opencv
   - pillow
+  - scikit-image
+  - spyder-kernels=2.3
+  - pandas
 prefix: /home/maberyick/anaconda3/envs/histoTIL

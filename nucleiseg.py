@@ -5,8 +5,6 @@ tf.disable_v2_behavior()
 import pylib.utils as utils
 from PIL import Image
 import numpy as np
-# use only if results are to be saved as h5 files
-#import h5py
 from timeit import default_timer as timer
 import argparse
 
@@ -14,9 +12,7 @@ def main(args):
     tf.flags.DEFINE_string('gpu_index', '0', 'gpu index, default: 0')
     FLAGS = tf.flags.FLAGS
     flags = FLAGS
-    #os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu_index
     run_config = tf.ConfigProto()
-    #run_config.gpu_options.allow_growth = True
     sess = tf.Session(config=run_config)
     model = utils.net_arch(sess, flags, (2000,2000))
     saver = tf.train.Saver()
@@ -46,11 +42,7 @@ def main(args):
         samples = np.squeeze(samples*255).astype(np.uint8)   
         # save as png file
         image = Image.fromarray(samples)
-        image.save(savingName, format='PNG')
-        # save as hdf5 file (.mat)
-        #hdf5 = h5py.File(savingName,mode='w')
-        #hdf5.create_dataset('mask', data = samples)
-        #hdf5.close()
+        image.save(savingName+'.png', format='PNG')
 
 ### Working paths
 parser = argparse.ArgumentParser(description='configuration for running the Epithelium-Stroma segmentation')
