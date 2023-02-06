@@ -7,6 +7,7 @@ from PIL import Image
 import numpy as np
 from timeit import default_timer as timer
 import argparse
+import cv2
 
 def main(args):
     tf.flags.DEFINE_string('gpu_index', '0', 'gpu index, default: 0')
@@ -61,17 +62,15 @@ def main(args):
                     print('file existed, continue to next')
                     continue
                 image = Image.open(name)
-                print(np.shape(image))
                 image = image.resize((2000,2000), Image.ANTIALIAS) 
                 print('predicting on image ', name)
                 image = np.expand_dims(image, axis=0)
-                print(np.shape(image))
                 samples = sess.run(tf.get_default_graph().get_tensor_by_name('g_/Sigmoid:0'), \
                         feed_dict={tf.get_default_graph().get_tensor_by_name('image:0'): image})
                 samples = np.squeeze(samples*255).astype(np.uint8)   
                 # save as png file
                 image = Image.fromarray(samples)
-                image.save(savingName, format='PNG')       
+                image.save(savingName,  format='PNG')       
 
     
 ### Working paths
