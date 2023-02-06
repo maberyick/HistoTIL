@@ -70,7 +70,7 @@ def main(args):
                 samples = np.squeeze(samples*255).astype(np.uint8)   
                 # save as png file
                 image = Image.fromarray(samples)
-                image.save(savingName,  format='PNG')       
+                image.save(savingName)       
 
     
 ### Working paths
