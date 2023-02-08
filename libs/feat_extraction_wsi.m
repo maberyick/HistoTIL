@@ -1,8 +1,28 @@
-function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality)
+function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type)
 lympModel=load(['./libs/lymp_svm_matlab_wsi.mat']);
 lympModel = lympModel.model;
 placeholder = 'placeholder';
-imgList=dir([folder_matpatches '*.mat']);
+% determine if single tiles (case) or folder (multiple cases)
+if folder_type == "tile_type"
+    disp('here')
+    imgList=dir([folder_matpatches '*.png']);
+    indx = randperm(numel(imgList));
+    numFiles=length(imgList);
+    imgList = {imgList(:).name};
+    imgList = parallel.pool.Constant(imgList);
+    qualitysaturationLim = quality.saturationLim;
+    qualityredChannelLim = quality.redChannelLim;
+    qualityblurLimit = quality.blurLimit;
+    qualityimgarea = quality.imgarea;
+elseif folder_type == "folder_type"
+    disp('over here')
+else
+    disp('no fodler type')
+end
+
+
+imgList=dir([folder_matpatches '*.png']);
+%imgList=dir([folder_matpatches '*.mat']);
 indx = randperm(numel(imgList));
 numFiles=length(imgList);
 imgList = {imgList(:).name};
@@ -36,7 +56,7 @@ parfor nn=1:numFiles
     mkdir(SSmaskFolder);
     mkdir(EBmaskFolder);
     mkdir(featlocFolder);
-    % open .mat file
+    % open .png file
     imgFile_load = load(imgFile);
     numtilestruct = length(imgFile_load.tileStruct);
     indx2 = randperm(numel(imgFile_load.tileStruct));

@@ -31,6 +31,7 @@ def main(args):
         names = utils.all_files_under(args.input_path,'.png')
         for name in names:
             print(name)
+            print(os.path.basename(name))
             savingName = args.output_path + os.path.basename(name)[:-4]
             if os.path.isfile(savingName):
                 print('file existed, continue to next')
@@ -61,7 +62,8 @@ def main(args):
         folder_list = utils.all_files_under(args.input_wsi)
         for folder in folder_list:
             folder_dir = os.path.splitext(folder)[0]
-            folder_name = os.path.splitext(os.path.basename(folder_dir))[0]
+            folder_name = os.path.basename(folder_dir)
+            print(folder_name)
             if not os.path.isdir(args.output_path + folder_name):
                 os.mkdir(args.output_path + folder_name)
             # loop through the files of each folder
