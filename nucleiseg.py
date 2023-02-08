@@ -9,9 +9,10 @@ from timeit import default_timer as timer
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from numpy import asarray
 
 def main(args):
-    tf.flags.DEFINE_string('gpu_index', '0', 'gpu index, default: 0')
+    tf.flags.DEFINE_string('gpu_index', '1', 'gpu index, default: 0')
     FLAGS = tf.flags.FLAGS
     flags = FLAGS
     run_config = tf.ConfigProto()
@@ -36,7 +37,16 @@ def main(args):
                 continue
             image = Image.open(name)
             print(np.shape(image))
-            image = image.resize((2000,2000), Image.ANTIALIAS) 
+            # ToDo: Improve the detection of cells, image scaling and color normalization
+            # Split image into 4 tiles
+            #image_numpydata = asarray(image)
+            #M = image_numpydata.shape[0]//2
+            #N = image_numpydata.shape[1]//2
+            #tiles = [image_numpydata[x:x+M,y:y+N] for x in range(0,image_numpydata.shape[0],M) for y in range(0,image_numpydata.shape[1],N)]
+            # get image back
+            #pilImage = Image.fromarray(tiles[0])
+            #
+            image = image.resize((2000,2000), Image.ANTIALIAS)
             print('predicting on image ', name)
             image = np.expand_dims(image, axis=0)
             print(np.shape(image))
