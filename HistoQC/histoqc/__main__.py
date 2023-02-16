@@ -28,7 +28,7 @@ def copyMaskUseMaps(args,files):
     os.makedirs(args.maskuse_outdir, exist_ok=True)
     for fname in files:
         fname = os.path.basename(fname)
-        shutil.copy(os.path.join(args.outdir, fname, fname + '_blurry.png'), os.path.join(args.maskuse_outdir, os.path.splitext(fname)[0] + '.png'))
+        shutil.copy(os.path.join(args.outdir, fname, fname + '_mask_use.png'), os.path.join(args.maskuse_outdir, os.path.splitext(fname)[0] + '.png'))
 
 @managed_pkg_data
 def main(argv=None):

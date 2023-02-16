@@ -97,7 +97,7 @@ def startPatchExtraction(ind, files, args):
                 coord_text2 = [cenX-(mask_tile_size//2)+2, cenY-(mask_tile_size//2)+2]
                 if ImageStat.Stat(maskRegion).mean[0] > args.min_cellular_density:
                     tile = dz.get_tile(dzLevel, (i, j)).convert("RGB")
-                    tile.save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
+                    tile.resize((2048,2048)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
                     counter += 1
                     wsi_tiss_per.append(ImageStat.Stat(maskRegion).mean[0])
                     wsi_id.append(baseFname+'_r'+str(coord[1])+'_c'+str(coord[0]))
