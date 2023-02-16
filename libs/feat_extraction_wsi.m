@@ -14,13 +14,92 @@ if folder_type == "tile_type"
     qualityredChannelLim = quality.redChannelLim;
     qualityblurLimit = quality.blurLimit;
     qualityimgarea = quality.imgarea;
+    parfor nn=1:numFiles
+        i= indx(nn);
+        [~,imgName]=fileparts(imgList.Value{i});
+        outputFolder=[folder_savepath 'dataset_output/' imgName];
+        maskFolder=[outputFolder '/png_binmask/png_cellmask/'];
+        maskEFolder=[outputFolder '/png_binmask/png_cellepimask/'];
+        maskSFolder=[outputFolder '/png_binmask/png_cellstromask/'];
+        maskBFolder=[outputFolder '/png_binmask/png_cellbundmask/'];
+        ESmaskFolder=[outputFolder '/png_binmask/png_epithmask/'];
+        SSmaskFolder=[outputFolder '/png_binmask/png_stromask/'];
+        EBmaskFolder=[outputFolder '/png_binmask/png_boundaryepistromask/'];
+        featlocFolder=[outputFolder '/TIL_features/'];
+        disp(outputFolder)
+        mkdir(outputFolder);
+        mkdir(maskFolder);
+        mkdir(maskEFolder);
+        mkdir(maskSFolder);
+        mkdir(maskBFolder);
+        mkdir(ESmaskFolder);
+        mkdir(SSmaskFolder);
+        mkdir(EBmaskFolder);
+        mkdir(featlocFolder);
+        featFile=sprintf('%s/%s.mat',featlocFolder,imgName);
+        maskFile=sprintf('%s/%s.png',maskFolder,imgName);
+        maskEFile=sprintf('%s/%s.png',maskEFolder,imgName);
+        maskSFile=sprintf('%s/%s.png',maskSFolder,imgName);
+        maskBFile=sprintf('%s/%s.png',maskBFolder,imgName);
+        ESmaskFile=sprintf('%s/%s.png',ESmaskFolder,imgName);
+        SSmaskFile=sprintf('%s/%s.png',SSmaskFolder,imgName);
+        EBmaskFile=sprintf('%s/%s.png',EBmaskFolder,imgName);
+        % load the image
+        curTile = imread([folder_matpatches imgList.Value{i}]);
+        % load the epistroma mask
+        curTile_ESmask = imread([folder_pyepistroma imgList.Value{i}]);
+        % load the nuclei mask, if not saved, calculate
+        curTile_Nmask = imread([folder_matcellmask imgList.Value{i}]);
+        % get_cleanMask_v2
+
+        % generate the nuclei mask
+        if (getSaturationMetric(curTile)>qualitysaturationLim && ...
+                getRedMetric(curTile)>qualityredChannelLim && ...
+                blurMetric(curTile)>qualityblurLimit && ...
+                getAreaTissue(curTile)>qualityimgarea)
+            if exist(featFile,'file')~=2
+                parsave(featFile, placeholder);
+                % Check if Cell mask and Epistroma mask have same quantity
+                if size(curTile_ESmask_struct) == size(curTile_Nmask_struct)
+                    fprintf('Processing tile %s_%d\n',imgName,i);
+                    curTile_ESmask = curTile_ESmask_struct(:,:,i)'; % For a single mask
+                    curTile_Nmask = curTile_Nmask_struct(:,:,i)'; % For a single mask
+                    [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
+                        isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
+                        nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
+                        denFeat_bund,spaFeat_bund,ctxFeat_bund] = get_mixTIL(...
+                        curTile,curTile_ESmask,curTile_Nmask,maskFile,maskEFile,...
+                        maskSFile,maskBFile,ESmaskFile,SSmaskFile,EBmaskFile,lympModel);
+                    parsave_cellfeat_mixtil(featFile,nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
+                        isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
+                        nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
+                        denFeat_bund,spaFeat_bund,ctxFeat_bund);
+                else
+                    filePh_error = fopen([folder_savepath 'errorlist_patches.txt'],'a');
+                    fprintf(filePh_error,'Mismatch cell and epistroma mask %s_%d\n',imgName,indx2(i));
+                    fclose(filePh_error);
+                    continue
+                end
+            else
+                %disp('mat tile already exists')
+                continue
+            end
+        end
+    end
 elseif folder_type == "folder_type"
     disp('over here')
+    
 else
     disp('no fodler type')
 end
 
 
+
+
+
+
+
+%%
 imgList=dir([folder_matpatches '*.png']);
 %imgList=dir([folder_matpatches '*.mat']);
 indx = randperm(numel(imgList));
