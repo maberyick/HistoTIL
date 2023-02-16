@@ -8,7 +8,9 @@ import numpy as np
 from timeit import default_timer as timer
 import argparse
 import cv2
-
+from histomicstk.preprocessing.color_normalization.\
+    deconvolution_based_normalization import deconvolution_based_normalization
+    
 def main(args):
     tf.flags.DEFINE_string('gpu_index', '0', 'gpu index, default: 0')
     FLAGS = tf.flags.FLAGS
@@ -18,7 +20,17 @@ def main(args):
     model = utils.net_arch(sess, flags, (2000,2000))
     saver = tf.train.Saver()
     sess.run(tf.global_variables_initializer())
-    model_out_dir = "./models/model_epistroma"  
+    model_out_dir = "./models/model_epistroma"
+    # define color tcga image
+    # TCGA-A2-A3XS-DX1_xmin21421_ymin37486_.png, Amgad et al, 2019)
+    # for macenco (obtained using rgb_separate_stains_macenko_pca()
+    # and reordered such that columns are the order:
+    # Hamtoxylin, Eosin, Null
+    W_target = np.array([
+        [0.5807549,  0.08314027,  0.08213795],
+        [0.71681094,  0.90081588,  0.41999816],
+        [0.38588316,  0.42616716, -0.90380025]
+    ])
     if utils.load_model(sess, saver, model_out_dir):
         best_auc_sum = sess.run(model.best_auc_sum)
         print('====================================================')
@@ -34,6 +46,14 @@ def main(args):
                 print('file existed, continue to next')
                 continue
             image = Image.open(name)
+            # ToDo: Improve the detection of cells, image scaling and color normalization
+            stain_unmixing_routine_params = {
+                'stains': ['hematoxylin', 'eosin'],
+                'stain_unmixing_method': 'macenko_pca',}
+            tissue_rgb_normalized = deconvolution_based_normalization(
+                np.asarray(image), W_target=W_target,
+                stain_unmixing_routine_params=stain_unmixing_routine_params)
+            image = Image.fromarray(np.uint8(tissue_rgb_normalized))
             print(np.shape(image))
             image = image.resize((2000,2000), Image.ANTIALIAS) 
             print('predicting on image ', name)
