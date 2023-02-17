@@ -7,9 +7,7 @@ from PIL import Image
 import numpy as np
 from timeit import default_timer as timer
 import argparse
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-from numpy import asarray
+# from numpy import asarray
 from histomicstk.preprocessing.color_normalization.\
     deconvolution_based_normalization import deconvolution_based_normalization
 
@@ -102,18 +100,9 @@ def main(args):
                 samples = sess.run(tf.get_default_graph().get_tensor_by_name('g_/Sigmoid:0'), \
                         feed_dict={tf.get_default_graph().get_tensor_by_name('image:0'): image})
                 samples = np.squeeze(samples*255.0).astype(np.uint8)
-                #img_norm = samples
-                #img_norm = (samples - np.amin(samples))*255.0/(np.amax(samples) - np.amin(samples))
-                #img_norm = np.uint8(img_norm)
-                #print(samples.shape)
-                #print(np.amin(samples))
-                #print(np.amax(samples))
                 # save as png file
                 image = Image.fromarray(samples)
                 image.save(savingName, format='PNG')
-                #print(np.amin(img_norm))
-                #rgb_img = np.dstack((img_norm,img_norm,img_norm))
-                #plt.imsave(savingName, rgb_img, cmap=cm.gray)    
 
 ### Working paths
 parser = argparse.ArgumentParser(description='configuration for running the nuclei segmentation')

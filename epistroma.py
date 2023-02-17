@@ -7,7 +7,6 @@ from PIL import Image
 import numpy as np
 from timeit import default_timer as timer
 import argparse
-import cv2
 from histomicstk.preprocessing.color_normalization.\
     deconvolution_based_normalization import deconvolution_based_normalization
     
@@ -70,7 +69,8 @@ def main(args):
         folder_list = utils.all_files_under(args.input_wsi)
         for folder in folder_list:
             folder_dir = os.path.splitext(folder)[0]
-            folder_name = os.path.splitext(os.path.basename(folder_dir))[0]
+            folder_name = os.path.basename(folder_dir)
+            print(folder_name)
             if not os.path.isdir(args.output_path + folder_name):
                 os.mkdir(args.output_path + folder_name)
             # loop through the files of each folder
@@ -82,15 +82,17 @@ def main(args):
                     print('file existed, continue to next')
                     continue
                 image = Image.open(name)
+                print(np.shape(image))
                 image = image.resize((2000,2000), Image.ANTIALIAS) 
                 print('predicting on image ', name)
                 image = np.expand_dims(image, axis=0)
+                print(np.shape(image))
                 samples = sess.run(tf.get_default_graph().get_tensor_by_name('g_/Sigmoid:0'), \
                         feed_dict={tf.get_default_graph().get_tensor_by_name('image:0'): image})
-                samples = np.squeeze(samples*255).astype(np.uint8)   
+                samples = np.squeeze(samples*255.0).astype(np.uint8)
                 # save as png file
                 image = Image.fromarray(samples)
-                image.save(savingName)       
+                image.save(savingName, format='PNG')
 
     
 ### Working paths
