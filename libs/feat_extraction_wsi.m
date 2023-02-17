@@ -26,15 +26,15 @@ if folder_type == "tile_type"
         EBmaskFolder=[outputFolder '/png_binmask/png_boundaryepistromask/'];
         featlocFolder=[outputFolder '/TIL_features/'];
         disp(outputFolder)
-        mkdir(outputFolder);
-        mkdir(maskFolder);
-        mkdir(maskEFolder);
-        mkdir(maskSFolder);
-        mkdir(maskBFolder);
-        mkdir(ESmaskFolder);
-        mkdir(SSmaskFolder);
-        mkdir(EBmaskFolder);
-        mkdir(featlocFolder);
+        [~,~] = mkdir(outputFolder);
+        [~,~] = mkdir(maskFolder);
+        [~,~] = mkdir(maskEFolder);
+        [~,~] = mkdir(maskSFolder);
+        [~,~] = mkdir(maskBFolder);
+        [~,~] = mkdir(ESmaskFolder);
+        [~,~] = mkdir(SSmaskFolder);
+        [~,~] = mkdir(EBmaskFolder);
+        [~,~] = mkdir(featlocFolder);
         featFile=sprintf('%s/%s.mat',featlocFolder,imgName);
         maskFile=sprintf('%s/%s.png',maskFolder,imgName);
         maskEFile=sprintf('%s/%s.png',maskEFolder,imgName);
@@ -122,15 +122,15 @@ elseif folder_type == "folder_type"
             EBmaskFolder=[outputFolder filesep 'png_binmask' filesep 'png_boundaryepistromask'];
             featlocFolder=[outputFolder filesep 'TIL_features'];
             disp(outputFolder)
-            mkdir(outputFolder);
-            mkdir(maskFolder);
-            mkdir(maskEFolder);
-            mkdir(maskSFolder);
-            mkdir(maskBFolder);
-            mkdir(ESmaskFolder);
-            mkdir(SSmaskFolder);
-            mkdir(EBmaskFolder);
-            mkdir(featlocFolder);
+            [~,~] = mkdir(outputFolder);
+            [~,~] = mkdir(maskFolder);
+            [~,~] = mkdir(maskEFolder);
+            [~,~] = mkdir(maskSFolder);
+            [~,~] = mkdir(maskBFolder);
+            [~,~] = mkdir(ESmaskFolder);
+            [~,~] = mkdir(SSmaskFolder);
+            [~,~] = mkdir(EBmaskFolder);
+            [~,~] = mkdir(featlocFolder);
             featFile=sprintf('%s/%s.mat',featlocFolder,imgName);
             maskFile=sprintf('%s/%s.png',maskFolder,imgName);
             maskEFile=sprintf('%s/%s.png',maskEFolder,imgName);
@@ -166,24 +166,24 @@ elseif folder_type == "folder_type"
                 if exist(featFile,'file')~=2
                     parsave(featFile, placeholder);
                     % Check if Cell mask and Epistroma mask have same quantity
-                    if size(curTile_ESmask) == size(curTile_Nmask)
-                        fprintf('Processing tile %s_%d\n',imgName,i);
-                        [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
-                            isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
-                            nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
-                            denFeat_bund,spaFeat_bund,ctxFeat_bund] = get_mixTIL(...
-                            curTile,curTile_ESmask,curTile_Nmask,maskFile,maskEFile,...
-                            maskSFile,maskBFile,ESmaskFile,SSmaskFile,EBmaskFile,lympModel);
-                        parsave_cellfeat_mixtil(featFile,nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
-                            isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
-                            nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
-                            denFeat_bund,spaFeat_bund,ctxFeat_bund);
-                    else
-                        filePh_error = fopen([folder_savepath 'errorlist_patches.txt'],'a');
-                        fprintf(filePh_error,'Mismatch cell and epistroma mask %s_%d\n',imgName,indx2(i));
-                        fclose(filePh_error);
-                        continue
-                    end
+                    %                     if size(curTile_ESmask) == size(curTile_Nmask)
+                    fprintf('Processing tile %s_%d\n',imgName,i);
+                    [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
+                        isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
+                        nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
+                        denFeat_bund,spaFeat_bund,ctxFeat_bund] = get_mixTIL(...
+                        curTile,curTile_ESmask,curTile_Nmask,maskFile,maskEFile,...
+                        maskSFile,maskBFile,ESmaskFile,SSmaskFile,EBmaskFile,lympModel);
+                    parsave_cellfeat_mixtil(featFile,nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
+                        isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
+                        nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
+                        denFeat_bund,spaFeat_bund,ctxFeat_bund);
+                    %                     else
+                    %                         filePh_error = fopen([folder_savepath 'errorlist_patches.txt'],'a');
+                    %                         fprintf(filePh_error,'Mismatch cell and epistroma mask %s_%d\n',imgName,indx2(i));
+                    %                         fclose(filePh_error);
+                    %                         continue
+                    %                     end
                 else
                     disp('mat tile already exists')
                     continue
@@ -195,20 +195,20 @@ else
     disp('no fodler type')
 end
 %ToDo: include method to delete the 1Kb files
-parfor n=1:numFiles
-    [~,imgName]=fileparts(imgList.Value{n});
-    % ToDo: Check if the nuclei and ES are already being processed, to be
-    % used with another feature set
-    %imgFile=[folder_matpatches imgList{n}];
-    outputFolder=[folder_savepath 'dataset_output/' imgName];
-    featlocFolder=[outputFolder '/TIL_features/*.mat'];
-    files = dir(featlocFolder);
-    for ii = 1:length(files)
-        if files(ii).bytes==187 % file with 'placeholder' word
-            delete(fullfile(files(ii).folder, files(ii).name))
-        end
-    end
-end
+% parfor n=1:numFiles
+%     [~,imgName]=fileparts(imgList.Value{n});
+%     % ToDo: Check if the nuclei and ES are already being processed, to be
+%     % used with another feature set
+%     %imgFile=[folder_matpatches imgList{n}];
+%     outputFolder=[folder_savepath 'dataset_output/' imgName];
+%     featlocFolder=[outputFolder '/TIL_features/*.mat'];
+%     files = dir(featlocFolder);
+%     for ii = 1:length(files)
+%         if files(ii).bytes==187 % file with 'placeholder' word
+%             delete(fullfile(files(ii).folder, files(ii).name))
+%         end
+%     end
+% end
 fprintf('Done!\n');
 % Save the geenral feature description
  description_spaTIL = {'avg of ratio of the nuceli cluster density to its closest lym cluster cluster',...
