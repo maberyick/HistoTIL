@@ -1,0 +1,140 @@
+---
+title: "HistoTIL_feature_summary"
+author: "Cristian Barrera"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Libraries
+```{r}
+library(ggplot2)
+library(uwot)
+library(R.matlab)
+library(gridExtra)
+library(grid)
+library(cowplot)
+library(lattice)
+library("ggsci")
+library(tidyverse)
+library(colourlovers)
+library(ggpubr)
+library(dplyr)
+```
+
+Read the csv files for the patches information
+```{r}
+
+#find all tifs in your directory
+dir<-"/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/patch_summary/"
+#get a list of all files with ndvi in the name in your directory
+files<-list.files(path=dir, pattern='csv', full.names = TRUE)
+
+df_final <- data.frame(matrix(ncol = 8, nrow = 0))
+colnames(df_final) <- c('Patch.name','Tissue.percentage','WSI.coord..x.','WSI.coord..y.','WSI.position..row.','WSI.position..column.','file_name_col')
+df_final_summary <- data.frame(matrix(ncol = 5, nrow = 0))
+colnames(df_final_summary) <- c('File name','Patch number','Tissue percentage','Max WSI coord(x)','Max WSI coord(y)')
+
+x = 1
+for (file in files){
+  filename <- file[[1]]
+  patch_summary_tmp <- read.csv(filename)
+  # add the name or ID of the WSI image
+  file_name = strsplit(basename(filename),split='_patch_list.csv')
+  file_name_col = rep(file_name[[1]],length(patch_summary_tmp$Number))
+  df_tmp <- cbind(patch_summary_tmp, file_name_col)
+  df_final <- rbind(df_final,df_tmp)
+  df_final_summary[x,] <- c(file_name[[1]],length(patch_summary_tmp$Number),median(patch_summary_tmp$Tissue.percentage),max(patch_summary_tmp$WSI.coord..x.),max(patch_summary_tmp$WSI.coord..y.))
+  x=x+1
+}
+df_final_summary$`Tissue percentage` <- as.numeric(df_final_summary$`Tissue percentage`)
+df_final_summary$`Tissue percentage` <- 100*df_final_summary$`Tissue percentage`
+df_final_summary$`Patch number` <- as.numeric(df_final_summary$`Patch number`)
+df_final_summary$`Max WSI coord(x)` <- as.numeric(df_final_summary$`Max WSI coord(x)`)
+df_final_summary$`Max WSI coord(y)` <- as.numeric(df_final_summary$`Max WSI coord(y)`)
+df_final_summary$Tissue_cont <- cut(df_final_summary$`Tissue percentage`, c(30,80), breaks = 3, labels = c("Low tissue","Medium Tissue", "High Tissue"))
+
+```
+
+Summary of the data
+```{r}
+data_y1_y2 = subset(dat_1, Dataset=="D1" | Dataset=="D2")
+
+ggplot(df_final_summary) +
+  aes(x = `Tissue percentage`, y = `Patch number`, colour = `File name`) +
+  geom_point() +
+  scale_color_hue()
+
+# Plot
+df_final_summary %>% 
+  ggplot(aes(x=`Tissue percentage`,y=`Patch number`)) +
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(alpha=0.5, aes(color=Tissue_cont,size=(`Max WSI coord(y)`+`Max WSI coord(x)`)/100)) + 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="Total tissue (%)", y= "Number of patches",
+       title="AZ H&E images summary") +
+  scale_y_log10()+
+  scale_x_log10()+
+  geom_smooth(method=lm,se=FALSE) +
+  ggrepel::geom_text_repel(data = df_final_summary %>%
+                           filter(`Tissue percentage` > 10 | `Tissue percentage` < 5) %>%
+                           sample_n(15),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = `File name`))
+
+```
+
+Summary of the data in patches
+```{r}
+
+df_final$Tissue.percentage <- as.numeric(df_final$Tissue.percentage)
+df_final$Tissue.percentage <- 100*df_final$Tissue.percentage
+df_final$WSI.coord..x. <- as.numeric(df_final$WSI.coord..x.)
+df_final$WSI.coord..y. <- as.numeric(df_final$WSI.coord..y.)
+df_final$WSI.position..row. <- as.numeric(df_final$WSI.position..row.)
+df_final$Tissue_cont <- cut(df_final$Tissue.percentage, c(30,80), breaks = 3, labels = c("Low tissue","Medium Tissue", "High Tissue"))
+
+df_final <- na.omit(df_final)
+
+# Plot
+df_final %>% 
+  ggplot(aes(x=Number,y=Tissue.percentage)) +
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(alpha=0.5, aes(color=Tissue_cont,size=(`WSI.coord..y.`+`WSI.coord..x.`)/100)) + 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="Total tissue (%)", y= "Patch size (x * y)",
+       title="AZ H&E images summary") +
+  scale_y_log10()+
+  scale_x_log10()+
+  geom_smooth(method=lm,se=FALSE) +
+  ggrepel::geom_text_repel(data = df_final %>%
+                           filter(Tissue.percentage > 10 | Tissue.percentage < 5) %>%
+                           sample_n(15),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = file_name_col))
+
+ggplot(df_final_summary, aes(`Patch number`, `File name`, fill = Tissue_cont)) +      # ggplot2 barplot with error bars
+  coord_flip() +
+  stat_summary(geom = "bar", fun = mean, position = "dodge") +
+  stat_summary(geom = "errorbar", fun.data = mean_se, position = "dodge") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=7))
+```
+
+
+Feature analysis
+
+Load the mat files and stack them
+```{r}
+
+
+
+
+
+
+```
+
