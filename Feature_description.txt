@@ -1,0 +1,66 @@
+=======================================================
+|| feature explaination for nuclei and contextual features
+=======================================================
+
+Nuclei
+'histotil_nuclei_tiss_var_1_stat_bds_1_stat_bds_1'
+'histotil_nuclei_epi_var_1_stat_bds_1_stat_bds_1'
+'histotil_nuclei_stro_var_1_stat_bds_1_stat_bds_1'
+'histotil_nuclei_bund_var_1_stat_bds_1_stat_bds_1'
+
+Contextual
+'histotil_context_tiss_var_1_stat_bds_1_stat_bds_1'
+'histotil_context_epi_var_1_stat_bds_1_stat_bds_1'
+'histotil_context_stro_var_1_stat_bds_1_stat_bds_1'
+'histotil_context_bund_var_1_stat_bds_1_stat_bds_1'
+
+histotil_
+nuclei_
+epi_
+var_6_
+stat_ctd_3_
+
+var_2906_
+stat_
+ctd_2
+
+Explaination
+histotil = feature type HistoTIL
+nuclei = feature group (morphological features)
+tiss = Tissue (related to all the patch)
+epi, stro, bund = related to epithelium, stroma or boundary in betweem them
+var 1 = variable 1 (out of the 100 available feature vector extracted from each cell)
+stat bds 1 = statistical variable generated 
+- Then it has another set of stats features extracted from the patches to the whole image level
+_stat_bds_1 = similar to the stats variable description
+
+=======================================================
+|| feature explaination for density and spatial features
+=======================================================
+
+=======================================================
+|| Statistical variables
+=======================================================
+basic descriptive statistic
+'stat_bds_1' max: Maximum value
+'stat_bds_2' mean: Average or mean value
+'stat_bds_3', median: Median value
+'stat_bds_4', min: Smallest value
+'stat_bds_5', mode: Most frequent value
+'stat_bds_6', std: Standard deviation
+'stat_bds_7', var: Variance, which measures the spread or dispersion of the values
+'stat_bds_8', rms: Root-mean-square value (Basic)
+'stat_bds_9', iqr: Interquartile range of data set (Percentile and Quantile)
+
+advanced descriptive statistic: Central Tendency and Dispersion
+'stat_ctd_1', geomean: Geometric mean
+'stat_ctd_2', harmmean: Harmonic mean
+'stat_ctd_3', trimmean:	Mean, excluding outliers at 10% of the input values
+'stat_ctd_4', kurtosis:	Kurtosis
+'stat_ctd_5', moment: Central moment with the order of 2 (variance)
+'stat_ctd_6', skewness:	Skewness
+
+advanced descriptive statistic: Range, Deviation, and Z-Score
+'stat_rdz_1', range: Range of values
+'stat_rdz_2', mad: Mean or median absolute deviation
+'stat_rdz_3' zscore: Standarized z-score and the mean value calculated from it
