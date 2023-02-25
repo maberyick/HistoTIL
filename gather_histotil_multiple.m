@@ -13,6 +13,18 @@ nuc_cohort_feat = [];
 cot_cohort_feat = [];
 den_cohort_feat = [];
 spa_cohort_feat = [];
+
+% Patch based
+nuc_cohort_feat_patch = [];
+cot_cohort_feat_patch = [];
+den_cohort_feat_patch = [];
+spa_cohort_feat_patch = [];
+folderName_clean_patch = {};
+counter_patch = 1;
+%
+folderName_clean = {};
+counter = 1;
+
 % loop through the values
 textprogressbar('calculating feature stats: ');
 
@@ -53,6 +65,9 @@ for mm=1:length(folderNames)
     [siz_a_nuc,siz_b_nuc] = size(nuc_feat_cohort);
     [siz_a_ctx,siz_b_ctx] = size(contx_feat_cohort);
     stats_size = 18;
+    % gather patch based
+    nuc_cohort_feat_patch = [nuc_cohort_feat_patch; nuc_feat_cohort];
+    cot_cohort_feat_patch = [cot_cohort_feat_patch; contx_feat_cohort];
     % ---------------------------------------------------- %
     if siz_a_nuc == 1
         for p=1:stats_size
@@ -77,7 +92,7 @@ for mm=1:length(folderNames)
     dens_feat_cohort_epi = [];
     dens_feat_cohort_stro = [];
     dens_feat_cohort_bund = [];
-    %
+    %cot_cohort_feat_patch
     spat_feat_cohort_tiss = [];
     spat_feat_cohort_epi = [];
     spat_feat_cohort_stro = [];
@@ -132,32 +147,37 @@ for mm=1:length(folderNames)
         else
             spat_feat_cohort_bund = [spat_feat_cohort_bund; zeros(1,85)];
         end
+        folderName_clean_patch{counter_patch} = folderName;
+        counter_patch = counter_patch+1;
     end
     histotil_tmp = load([path_comp sub_folderList(nn).name]);
-    %% gather Nuclei features
+    %% gather Density features
     [dens_feat_cohort_all, dens_feat_name] = get_feature_set( ...
         dens_feat_cohort_tiss, ...
         dens_feat_cohort_epi, ...
         dens_feat_cohort_stro, ...
         dens_feat_cohort_bund, ...
         'histotil','nuclei',{'tiss','epi','stro','bund'});
-    %% gather contextual features
+    %% gather Spatial features
     [spat_feat_set_all, spat_feat_name] = get_feature_set( ...
         spat_feat_cohort_tiss, ...
         spat_feat_cohort_epi, ...
         spat_feat_cohort_stro, ...
         spat_feat_cohort_bund, ...
         'histotil','context',{'tiss','epi','stro','bund'});
+    %% Gather density and spatial Patch based
+    den_cohort_feat_patch = [den_cohort_feat_patch; [dens_feat_cohort_tiss dens_feat_cohort_epi dens_feat_cohort_stro dens_feat_cohort_bund]];
+    spa_cohort_feat_patch = [spa_cohort_feat_patch; [spat_feat_cohort_tiss spat_feat_cohort_epi spat_feat_cohort_stro spat_feat_cohort_bund]];
     %% Gather the features for the cohort
     nuc_cohort_feat = [nuc_cohort_feat; nuc_feat_cohort_total];
     cot_cohort_feat = [cot_cohort_feat; contx_feat_cohort_total];
     den_cohort_feat = [den_cohort_feat; dens_feat_cohort_all];
     spa_cohort_feat = [spa_cohort_feat; spat_feat_set_all];
+    folderName_clean{counter} = folderName;
+    counter = counter+1;
 end
 fprintf('\n')
 textprogressbar('done');
-
-
 %% get the names for the local cell features
 % nuclei
 varTypes = {'stat_bds_1','stat_bds_2','stat_bds_3',...
@@ -176,6 +196,7 @@ for m=1:stats_size
         varNames_local{counter} = strcat(nuc_feat_name{k},'_var_',num2str(k),'_',varTypes{m});
     end
 end
+
 % contextual
 len_feat_name = length(contx_feat_name);
 total_feats_size = stats_size*len_feat_name;
@@ -199,16 +220,38 @@ end
 fid = fopen([save_path_full cohort_name '_contextual_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', varNames_contx);
 fclose(fid);
+% contextual Patch
+len_feat_name = length(contx_feat_name);
+varNames_contx_patch = strings(1,len_feat_name);
+counter = 0;
+for k=1:length(contx_feat_name)
+    counter=counter+1;
+    varNames_contx_patch{counter} = strcat('contx_feat_',num2str(k));
+end
+fid = fopen([save_path_full '/patch_based/' cohort_name '_patch_contextual_features_names.txt'], 'wt');
+fprintf(fid, '%s\n', contx_feat_name);
+fclose(fid);
 % nuclei
 varNames_nucl_inter = strings(1,length(varNames_local));
 counter = 0;
 for k=1:length(varNames_local)
     counter=counter+1;
-    varNames_nucl_inter{counter} = strcat('contx_feat_',num2str(k));
+    varNames_nucl_inter{counter} = strcat('nucl_feat_',num2str(k));
 end
 %
 fid = fopen([save_path_full cohort_name '_nuclei_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', varNames_local);
+fclose(fid);
+% nuclei Patch
+len_feat_name = length(nuc_feat_name);
+varNames_local_patch = strings(1,len_feat_name);
+counter = 0;
+for k=1:length(nuc_feat_name)
+    counter=counter+1;
+    varNames_local_patch{counter} = strcat('nucl_feat_',num2str(k));
+end
+fid = fopen([save_path_full '/patch_based/' cohort_name '_patch_nuclei_features_names.txt'], 'wt');
+fprintf(fid, '%s\n', nuc_feat_name);
 fclose(fid);
 % density
 varNames_density_inter = strings(1,length(dens_feat_name));
@@ -217,10 +260,16 @@ for k=1:length(dens_feat_name)
     counter=counter+1;
     varNames_density_inter{counter} = strcat('density_feat_',num2str(k));
 end
-%
 fid = fopen([save_path_full cohort_name '_density_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', dens_feat_name);
 fclose(fid);
+% denstiy Patch
+varNames_density_inter_patch = strings(1,19*4);
+counter = 0;
+for k=1:19*4
+    counter=counter+1;
+    varNames_density_inter_patch{counter} = strcat('density_feat_',num2str(k));
+end
 % spatial
 varNames_spatial_inter = strings(1,length(spat_feat_name));
 counter = 0;
@@ -232,23 +281,59 @@ end
 fid = fopen([save_path_full cohort_name '_spatial_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', spat_feat_name);
 fclose(fid);
+% spatial Patch
+varNames_spatial_inter_patch = strings(1,85*4);
+counter = 0;
+for k=1:85*4
+    counter=counter+1;
+    varNames_spatial_inter_patch{counter} = strcat('spatial_feat_',num2str(k));
+end
 %% Save the feature table
 % contextual
 contextual_features = array2table(cot_cohort_feat,"VariableNames",varNames_contx_inter);
+contextual_features_comp = addvars(contextual_features,folderName_clean','Before','contx_feat_1','NewVariableNames','case_ID');
 % Save the tables
-writetable(contextual_features,[save_path_full cohort_name '_contextual_features.csv']);
+writetable(contextual_features_comp,[save_path_full cohort_name '_contextual_features.csv']);
 
 % nuclei
 nuclei_features = array2table(nuc_cohort_feat,"VariableNames",varNames_nucl_inter);
+nuclei_features_comp = addvars(nuclei_features,folderName_clean','Before','nucl_feat_1','NewVariableNames','case_ID');
 % Save the tables
-writetable(nuclei_features,[save_path_full cohort_name '_nuclei_features.csv']);
+writetable(nuclei_features_comp,[save_path_full cohort_name '_nuclei_features.csv']);
 
 % density
 density_features = array2table(den_cohort_feat,"VariableNames",varNames_density_inter);
+density_features_comp = addvars(density_features,folderName_clean','Before','density_feat_1','NewVariableNames','case_ID');
 % Save the tables
-writetable(density_features,[save_path_full cohort_name '_density_features.csv']);
+writetable(density_features_comp,[save_path_full cohort_name '_density_features.csv']);
 
 % spatial
 spatial_features = array2table(spa_cohort_feat,"VariableNames",varNames_spatial_inter);
+spatial_features_comp = addvars(spatial_features,folderName_clean','Before','spatial_feat_1','NewVariableNames','case_ID');
 % Save the tables
-writetable(spatial_features,[save_path_full cohort_name '_spatial_features.csv']);
+writetable(spatial_features_comp,[save_path_full cohort_name '_spatial_features.csv']);
+
+%% Patch based
+% contextual
+contextual_features = array2table(cot_cohort_feat_patch,"VariableNames",varNames_contx_patch);
+contextual_features_comp = addvars(contextual_features,folderName_clean_patch','Before','contx_feat_1','NewVariableNames','case_ID');
+% Save the tables
+writetable(contextual_features_comp,[save_path_full '/patch_based/' cohort_name '_contextual_features.csv']);
+
+% nuclei
+nuclei_features = array2table(nuc_cohort_feat_patch,"VariableNames",varNames_local_patch);
+nuclei_features_comp = addvars(nuclei_features,folderName_clean_patch','Before','nucl_feat_1','NewVariableNames','case_ID');
+% Save the tables
+writetable(nuclei_features_comp,[save_path_full '/patch_based/' cohort_name '_nuclei_features.csv']);
+
+% density
+density_features = array2table(den_cohort_feat_patch,"VariableNames",varNames_density_inter_patch);
+density_features_comp = addvars(density_features,folderName_clean_patch','Before','density_feat_1','NewVariableNames','case_ID');
+% Save the tables
+writetable(density_features_comp,[save_path_full '/patch_based/' cohort_name '_density_features.csv']);
+
+% spatial
+spatial_features = array2table(spa_cohort_feat_patch,"VariableNames",varNames_spatial_inter_patch);
+spatial_features_comp = addvars(spatial_features,folderName_clean_patch','Before','spatial_feat_1','NewVariableNames','case_ID');
+% Save the tables
+writetable(spatial_features_comp,[save_path_full '/patch_based/' cohort_name '_spatial_features.csv']);
