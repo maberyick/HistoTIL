@@ -19,6 +19,19 @@ library(tidyverse)
 library(colourlovers)
 library(ggpubr)
 library(dplyr)
+library(ggplot2)
+library(uwot)
+library(R.matlab)
+library(gridExtra)
+library(grid)
+library(cowplot)
+library(lattice)
+library("ggsci")
+library(tidyverse)
+library(colourlovers)
+library(ggpubr)
+library(dplyr)
+
 ```
 
 Read the csv files for the patches information
@@ -126,15 +139,312 @@ ggplot(df_final_summary, aes(`Patch number`, `File name`, fill = Tissue_cont)) +
 ```
 
 
-Feature analysis
+AZ Feature analysis
 
-Load the mat files and stack them
+Load the csv file for patient level features
 ```{r}
+# Local features
+dat_nuc <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/AZ_nuclei_features.csv')
+dat_contx <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/AZ_contextual_features.csv')
+dat_dens <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/AZ_density_features.csv')
+dat_spat <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/AZ_spatial_features.csv')
+dat_nuc_label <- as.character(dat_nuc[,1])
+
+dat_nuc_feat <- dat_nuc[,-1]
+dat_contx_feat <- dat_contx[,-1]
+dat_dens_feat <- dat_dens[,-1]
+dat_spat_feat <- dat_spat[,-1]
+
+#dat_nuc_feat[is.nan(dat_nuc_feat)] <- 0
+dat_nuc_feat[is.na(dat_nuc_feat)] <- 0
+dat_nuc_feat[dat_nuc_feat == Inf] <- 0
+
+#dat_contx_feat[is.nan(dat_contx_feat)] <- 0
+dat_contx_feat[is.na(dat_contx_feat)] <- 0
+dat_contx_feat[dat_contx_feat == Inf] <- 0
+
+#dat_dens_feat[is.nan(dat_dens_feat)] <- 0
+dat_dens_feat[is.na(dat_dens_feat)] <- 0
+dat_dens_feat[dat_dens_feat == Inf] <- 0
+
+#dat_spat_feat[is.nan(dat_spat_feat)] <- 0
+dat_spat_feat[is.na(dat_spat_feat)] <- 0
+dat_spat_feat[dat_spat_feat == Inf] <- 0
+
+```
+
+UMAPs
+```{r}
+dat_nuc_umap <- umap(dat_nuc_feat)
+dat_contx_umap <- umap(dat_contx_feat)
+dat_dens_umap <- umap(dat_dens_feat)
+dat_spat_umap <- umap(dat_spat_feat)
+# combine features
+dat_combine_umap <- umap(cbind(dat_nuc_umap,dat_contx_umap,dat_dens_umap,dat_spat_umap))
+```
+
+Plotting labels nuclei
+```{r}
+# Plot
+dat_nuc_lab_umap <- data.frame(x = dat_nuc_umap[,1],y = dat_nuc_umap[,2],Sample =  dat_nuc_label)
+dat_nuc_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=2)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (nuclei) UMAP") +
+  ggrepel::geom_text_repel(data = dat_nuc_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
+
+Plotting labels context
+```{r}
+# Plot
+dat_contx_lab_umap <- data.frame(x = dat_contx_umap[,1],y = dat_contx_umap[,2],Sample =  dat_nuc_label)
+dat_contx_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=2)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (contextual) UMAP") +
+  ggrepel::geom_text_repel(data = dat_contx_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
 
 
+Plotting labels lymp density
+```{r}
+# Plot
+dat_dens_lab_umap <- data.frame(x = dat_dens_umap[,1],y = dat_dens_umap[,2],Sample =  dat_nuc_label)
+dat_dens_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=2)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (lymp density) UMAP") +
+  ggrepel::geom_text_repel(data = dat_dens_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
 
 
+Plotting labels lymp spatial
+```{r}
+# Plot
+dat_spat_lab_umap <- data.frame(x = dat_spat_umap[,1],y = dat_spat_umap[,2],Sample =  dat_nuc_label)
+dat_spat_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=2)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (lymp spatial) UMAP") +
+  ggrepel::geom_text_repel(data = dat_spat_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
+
+Combine features
+```{r}
+# Plot
+dat_comb_lab_umap <- data.frame(x = dat_combine_umap[,1],y = dat_combine_umap[,2],Sample =  dat_nuc_label)
+dat_comb_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=2)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL UMAP") +
+  ggrepel::geom_text_repel(data = dat_comb_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
 
 
+Patch based analysis of all features
+```{r}
+dat_nuc <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/patch_based/AZ_nuclei_features.csv')
+dat_contx <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/patch_based/AZ_contextual_features.csv')
+dat_dens <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/patch_based/AZ_density_features.csv')
+dat_spat <- read.csv('/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/AZ/histotil/histotil_features/patch_based/AZ_spatial_features.csv')
+dat_nuc_label <- as.character(dat_nuc[,1])
+
+dat_nuc_feat <- dat_nuc[,-1]
+dat_contx_feat <- dat_contx[,-1]
+dat_dens_feat <- dat_dens[,-1]
+dat_spat_feat <- dat_spat[,-1]
+
+#dat_nuc_feat[is.nan(dat_nuc_feat)] <- 0
+dat_nuc_feat[is.na(dat_nuc_feat)] <- 0
+dat_nuc_feat[dat_nuc_feat == Inf] <- 0
+
+#dat_contx_feat[is.nan(dat_contx_feat)] <- 0
+dat_contx_feat[is.na(dat_contx_feat)] <- 0
+dat_contx_feat[dat_contx_feat == Inf] <- 0
+
+#dat_dens_feat[is.nan(dat_dens_feat)] <- 0
+dat_dens_feat[is.na(dat_dens_feat)] <- 0
+dat_dens_feat[dat_dens_feat == Inf] <- 0
+
+#dat_spat_feat[is.nan(dat_spat_feat)] <- 0
+dat_spat_feat[is.na(dat_spat_feat)] <- 0
+dat_spat_feat[dat_spat_feat == Inf] <- 0
+```
+
+UMAPs
+```{r}
+dat_nuc_umap <- umap(dat_nuc_feat)
+dat_contx_umap <- umap(dat_contx_feat)
+dat_dens_umap <- umap(dat_dens_feat)
+dat_spat_umap <- umap(dat_spat_feat)
+# combine features
+dat_combine_umap <- umap(cbind(dat_nuc_umap,dat_contx_umap,dat_dens_umap,dat_spat_umap))
+
+```
+
+Plotting labels nuclei
+```{r}
+# Plot
+dat_nuc_lab_umap <- data.frame(x = dat_nuc_umap[,1],y = dat_nuc_umap[,2],Sample =  dat_nuc_label)
+dat_nuc_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=0.5)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (nuclei) UMAP") +
+  ggrepel::geom_text_repel(data = dat_nuc_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
+Plotting labels context
+```{r}
+# Plot
+dat_contx_lab_umap <- data.frame(x = dat_contx_umap[,1],y = dat_contx_umap[,2],Sample =  dat_nuc_label)
+dat_contx_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=0.5)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (contextual) UMAP") +
+  ggrepel::geom_text_repel(data = dat_contx_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
+
+
+Plotting labels lymp density
+```{r}
+# Plot
+dat_dens_lab_umap <- data.frame(x = dat_dens_umap[,1],y = dat_dens_umap[,2],Sample =  dat_nuc_label)
+dat_dens_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=0.5)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (lymp density) UMAP") +
+  ggrepel::geom_text_repel(data = dat_dens_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
+
+
+Plotting labels lymp spatial
+```{r}
+# Plot
+dat_spat_lab_umap <- data.frame(x = dat_spat_umap[,1],y = dat_spat_umap[,2],Sample =  dat_nuc_label)
+dat_spat_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=0.5)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL (lymp spatial) UMAP") +
+  ggrepel::geom_text_repel(data = dat_spat_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.01, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
+```
+
+Combine features
+```{r}
+# Plot
+dat_comb_lab_umap <- data.frame(x = dat_combine_umap[,1],y = dat_combine_umap[,2],Sample =  dat_nuc_label)
+dat_comb_lab_umap %>% 
+  ggplot(aes(x, y, colour = Sample))+
+  geom_point()+
+  theme_bw()+
+  theme(legend.title = element_blank())+
+  geom_point(size=0.5)+ 
+  guides(color = guide_legend(override.aes = list(size = 5)))+
+  labs(x="UMAP-Dim1", y= "UMAP-Dim2",
+       title="AZ cohort - HistoTIL UMAP") +
+  ggrepel::geom_text_repel(data = dat_comb_lab_umap %>%
+                           sample_n(10),
+                           arrow = arrow(length = unit(0.1, "npc")),
+                           box.padding=0.5,
+                           size=4,
+                           aes(label = Sample))+
+  theme(legend.position = "none")
 ```
 
