@@ -1,5 +1,5 @@
 function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type)
-lympModel=load(['C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat']);
+lympModel=load(['./libs/lymp_svm_matlab_wsi.mat']);
 lympModel = lympModel.model;
 placeholder = 'placeholder';
 % determine if single tiles (case) or folder (multiple cases)
@@ -13,7 +13,7 @@ if folder_type == "tile_type"
     qualityredChannelLim = quality.redChannelLim;
     qualityblurLimit = quality.blurLimit;
     qualityimgarea = quality.imgarea;
-    textprogressbar('calculating histoTIL features...');fprintf('\n');
+    textprogressbar("calculating histoTIL features...");
     parfor nn=1:numFiles
         perct = 100*nn/numFiles;
         textprogressbar(perct);
@@ -74,7 +74,7 @@ if folder_type == "tile_type"
                 parsave(featFile, placeholder);
                 % Check if Cell mask and Epistroma mask have same quantity
                 if size(curTile_ESmask) == size(curTile_Nmask)
-                    %fprintf('Processing tile %s_%d\n',imgName,i);
+                    fprintf('Processing tile %s_%d\n',imgName,i);
                     [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
                         isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
                         nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
@@ -87,7 +87,7 @@ if folder_type == "tile_type"
                         denFeat_bund,spaFeat_bund,ctxFeat_bund);
                 else
                     filePh_error = fopen([folder_savepath 'errorlist_patches.txt'],'a');
-                    %fprintf(filePh_error,'Mismatch cell and epistroma mask %s_%d\n',imgName,indx2(i));
+                    fprintf(filePh_error,'Mismatch cell and epistroma mask %s_%d\n',imgName,indx2(i));
                     fclose(filePh_error);
                     continue
                 end
@@ -98,10 +98,10 @@ if folder_type == "tile_type"
         end
     end
 elseif folder_type == "folder_type"
+    textprogressbar("calculating histoTIL features...");
     folderList = dir(folder_matpatches);
     folderNames = {folderList([folderList.isdir]).name};
     folderNames = folderNames(~ismember(folderNames ,{'.','..'}));
-    textprogressbar('calculating histoTIL features...');fprintf('\n');
     for mm=1:length(folderNames)
         perct = 100*mm/length(folderNames);
         textprogressbar(perct);
@@ -161,6 +161,9 @@ elseif folder_type == "folder_type"
             if ima ~= ms2a
                 curTile_Nmask = imresize(curTile_Nmask,[ima imb]);
             end
+            % get_cleanMask_v2
+            %get_cleanMask_v2(I,M,maskFile);
+
             % generate the nuclei mask
             if (getSaturationMetric(curTile)>qualitysaturationLim && ...
                     getRedMetric(curTile)>qualityredChannelLim && ...
@@ -170,7 +173,7 @@ elseif folder_type == "folder_type"
                     parsave(featFile, placeholder);
                     % Check if Cell mask and Epistroma mask have same quantity
                     %                     if size(curTile_ESmask) == size(curTile_Nmask)
-                    %fprintf('Processing tile %s_%d\n',imgName,i);
+                    fprintf('Processing tile %s_%d\n',imgName,i);
                     [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,...
                         isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,...
                         nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,...
@@ -198,7 +201,7 @@ else
     %disp('no fodler type')
 end
 fprintf('\n')
-fprintf('all done');
+textprogressbar("all done");
 %ToDo: include method to delete the 1Kb files
 % parfor n=1:numFiles
 %     [~,imgName]=fileparts(imgList.Value{n});
@@ -214,6 +217,7 @@ fprintf('all done');
 %         end
 %     end
 % end
+fprintf('Done!\n');
 % Save the geenral feature description
  description_spaTIL = {'avg of ratio of the nuceli cluster density to its closest lym cluster cluster',...
     'avg of ratio of the nuceli cluster density to its second closest lym cluster density',...

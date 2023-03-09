@@ -3,6 +3,8 @@ function [full_feat_set] = stats_calc_feature(file_comp)
 %file_list = {};
 %% calculate the basic descriptive statistic
 % https://www.mathworks.com/help/matlab/data_analysis/descriptive-statistics.html
+% real values
+file_comp = real(file_comp);
 % max: Maximum value
 value_bds_1 = max(file_comp);
 % mean: Average or mean value
@@ -22,7 +24,14 @@ value_bds_7 = var(file_comp);
 % rms: Root-mean-square value (Basic)
 value_bds_8 = rms(file_comp);
 % iqr: Interquartile range of data set (Percentile and Quantile)
-value_bds_9 = iqr(file_comp);
+%value_bds_9 = iqr(file_comp);
+try
+    value_bds_9 = iqr(file_comp);
+catch
+    %disp('iqr: Interquartile range of data set (Percentile and Quantile): it did not calculate. return 0s')
+    [~,b] = size(file_comp);
+    value_bds_9 = zeros(1,b);
+end
 %% calculate the advanced descriptive statistic: Central Tendency and Dispersion
 % https://www.mathworks.com/help/stats/descriptive-statistics.html
 % geomean: Geometric mean

@@ -1,14 +1,21 @@
 % Gather the features and ave for each cohort
 %% add path of the dependencies
-addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
+% Windows
+addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL\'))
+% Linux
+%addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 %% paths and names
 cohort_name = 'AZ';
-folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
-save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
+% Windows
+folder_matpatches = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\dataset_output\'];
+save_path_full = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\'];
+% Linux
+%folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
+%save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
 folderList = dir(folder_matpatches);
 folderNames = {folderList([folderList.isdir]).name};
 folderNames = folderNames(~ismember(folderNames ,{'.','..'}));
-
+folderNames_count = folderNames;
 nuc_cohort_feat = [];
 cot_cohort_feat = [];
 den_cohort_feat = [];
@@ -17,15 +24,16 @@ spa_cohort_feat = [];
 textprogressbar('calculating feature stats: ');
 
 %% Gather the local cell features
-for mm=1:length(folderNames)
-    perct = 100*mm/length(folderNames);
+for mm=1:length(folderNames_count)
+    perct = 100*mm/length(folderNames_count);
     textprogressbar(perct);
     nuc_feat_cohort = [];
     contx_feat_cohort = [];
-    folderName = folderNames{mm};
-    path_comp = [folder_matpatches folderName '/TIL_features/'];
+    folderName = folderNames_count{mm};
+    path_comp = [folder_matpatches folderName filesep 'TIL_features' filesep];
     sub_folderList = dir([path_comp '*.mat']);
     if isempty(sub_folderList)
+        folderNames(m) = [];
         continue
     end
     for nn=1:length(sub_folderList)
@@ -88,7 +96,7 @@ for mm=1:length(folderNames)
         if length(histotil_tmp.denFeat) == 19
             dens_feat_cohort_tiss = [dens_feat_cohort_tiss; histotil_tmp.denFeat];
         else
-            dens_feat_cohort_tiss = [dens_feat_cohort_tiss; histotil_tmpzeros(1,19)];
+            dens_feat_cohort_tiss = [dens_feat_cohort_tiss; zeros(1,19)];
         end
         %
         if length(histotil_tmp.denFeat_epi) == 19
@@ -233,22 +241,31 @@ fid = fopen([save_path_full cohort_name '_spatial_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', spat_feat_name);
 fclose(fid);
 %% Save the feature table
+file_ID = folderNames';
 % contextual
 contextual_features = array2table(cot_cohort_feat,"VariableNames",varNames_contx_inter);
+contextual_features = addvars(contextual_features,file_ID,'Before',1);
+contextual_features.file_ID = string(contextual_features.file_ID);
 % Save the tables
 writetable(contextual_features,[save_path_full cohort_name '_contextual_features.csv']);
 
 % nuclei
 nuclei_features = array2table(nuc_cohort_feat,"VariableNames",varNames_nucl_inter);
+nuclei_features = addvars(nuclei_features,file_ID,'Before',1);
+nuclei_features.file_ID = string(nuclei_features.file_ID);
 % Save the tables
 writetable(nuclei_features,[save_path_full cohort_name '_nuclei_features.csv']);
 
 % density
 density_features = array2table(den_cohort_feat,"VariableNames",varNames_density_inter);
+density_features = addvars(density_features,file_ID,'Before',1);
+density_features.file_ID = string(density_features.file_ID);
 % Save the tables
 writetable(density_features,[save_path_full cohort_name '_density_features.csv']);
 
 % spatial
 spatial_features = array2table(spa_cohort_feat,"VariableNames",varNames_spatial_inter);
+spatial_features = addvars(spatial_features,file_ID,'Before',1);
+spatial_features.file_ID = string(spatial_features.file_ID);
 % Save the tables
 writetable(spatial_features,[save_path_full cohort_name '_spatial_features.csv']);

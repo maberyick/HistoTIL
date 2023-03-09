@@ -43,15 +43,27 @@ if sum(sum(M_epi)) == 0
     nucFeatures_epi = zeros(1,100);
     denFeat_epi = zeros(1,19);
     ctxFeat_epi = zeros(1,87);
+    isLymphocyte_epi = 0;
 else
-    isLymphocyte_epi = (predict(lympModel,nucFeatures_epi(:,1:7)))==1;
-    lympCentroids_epi=nucleiCentroids_epi(isLymphocyte_epi==1,:);
-    nonLympCentroids_epi=nucleiCentroids_epi(isLymphocyte_epi~=1,:);
-    nucAreas_epi=nucFeatures_epi(:,1);
-    lympAreas_epi=nucAreas_epi(isLymphocyte_epi==1);
-    [spaFeat_epi]=getSpaTILFeatures(lympCentroids_epi,nonLympCentroids_epi);
-    [denFeat_epi]=getDenTILFeatures(I,lympCentroids_epi,nonLympCentroids_epi,lympAreas_epi);
-    [ctxFeat_epi]=getContextTILFeatures(nucleiCentroids_epi,nucAreas_epi,nucFeatures_epi(:,2),nucFeatures_epi(:,8),nucFeatures_epi(:,11),nucFeatures_epi(:,5),nucFeatures_epi(:,13),nucFeatures_epi(:,14));
+    try
+        isLymphocyte_epi = (predict(lympModel,nucFeatures_epi(:,1:7)))==1;
+    catch
+        isLymphocyte_epi = 0;
+    end
+    if isLymphocyte_epi == 0
+        nucFeatures_epi = zeros(1,100);
+        spaFeat_epi = zeros(1,85);
+        denFeat_epi = zeros(1,19);
+        ctxFeat_epi = zeros(1,87);
+    else
+        lympCentroids_epi=nucleiCentroids_epi(isLymphocyte_epi==1,:);
+        nonLympCentroids_epi=nucleiCentroids_epi(isLymphocyte_epi~=1,:);
+        nucAreas_epi=nucFeatures_epi(:,1);
+        lympAreas_epi=nucAreas_epi(isLymphocyte_epi==1);
+        [spaFeat_epi]=getSpaTILFeatures(lympCentroids_epi,nonLympCentroids_epi);
+        [denFeat_epi]=getDenTILFeatures(I,lympCentroids_epi,nonLympCentroids_epi,lympAreas_epi);
+        [ctxFeat_epi]=getContextTILFeatures(nucleiCentroids_epi,nucAreas_epi,nucFeatures_epi(:,2),nucFeatures_epi(:,8),nucFeatures_epi(:,11),nucFeatures_epi(:,5),nucFeatures_epi(:,13),nucFeatures_epi(:,14));
+    end
 end
 % Extract based on the Stroma cells
 [nucleiCentroids_stro,nucFeatures_stro] = getNucLocalFeatures(I,M_stro);
@@ -60,15 +72,27 @@ if sum(sum(M_stro)) == 0
     nucFeatures_stro = zeros(1,100);
     denFeat_stro = zeros(1,19);
     ctxFeat_stro = zeros(1,87);
+    isLymphocyte_stro = 0;
 else
-    isLymphocyte_stro = (predict(lympModel,nucFeatures_stro(:,1:7)))==1;
-    lympCentroids_stro=nucleiCentroids_stro(isLymphocyte_stro==1,:);
-    nonLympCentroids_stro=nucleiCentroids_stro(isLymphocyte_stro~=1,:);
-    nucAreas_stro=nucFeatures_stro(:,1);
-    lympAreas_stro=nucAreas_stro(isLymphocyte_stro==1);
-    [spaFeat_stro]=getSpaTILFeatures(lympCentroids_stro,nonLympCentroids_stro);
-    [denFeat_stro]=getDenTILFeatures(I,lympCentroids_stro,nonLympCentroids_stro,lympAreas_stro);
-    [ctxFeat_stro]=getContextTILFeatures(nucleiCentroids_stro,nucAreas_stro,nucFeatures_stro(:,2),nucFeatures_stro(:,8),nucFeatures_stro(:,11),nucFeatures_stro(:,5),nucFeatures_stro(:,13),nucFeatures_stro(:,14));
+    try
+        isLymphocyte_stro = (predict(lympModel,nucFeatures_stro(:,1:7)))==1;
+    catch
+        isLymphocyte_stro = 0;
+    end
+    if isLymphocyte_stro == 0
+        spaFeat_stro = zeros(1,85);
+        nucFeatures_stro = zeros(1,100);
+        denFeat_stro = zeros(1,19);
+        ctxFeat_stro = zeros(1,87);
+    else
+        lympCentroids_stro=nucleiCentroids_stro(isLymphocyte_stro==1,:);
+        nonLympCentroids_stro=nucleiCentroids_stro(isLymphocyte_stro~=1,:);
+        nucAreas_stro=nucFeatures_stro(:,1);
+        lympAreas_stro=nucAreas_stro(isLymphocyte_stro==1);
+        [spaFeat_stro]=getSpaTILFeatures(lympCentroids_stro,nonLympCentroids_stro);
+        [denFeat_stro]=getDenTILFeatures(I,lympCentroids_stro,nonLympCentroids_stro,lympAreas_stro);
+        [ctxFeat_stro]=getContextTILFeatures(nucleiCentroids_stro,nucAreas_stro,nucFeatures_stro(:,2),nucFeatures_stro(:,8),nucFeatures_stro(:,11),nucFeatures_stro(:,5),nucFeatures_stro(:,13),nucFeatures_stro(:,14));
+    end
 end
 % Extract based on the Stroma cells
 [nucleiCentroids_bund,nucFeatures_bund] = getNucLocalFeatures(I,M_bund);
@@ -77,14 +101,26 @@ if sum(sum(M_bund)) == 0
     nucFeatures_bund = zeros(1,100);
     denFeat_bund = zeros(1,19);
     ctxFeat_bund = zeros(1,87);
+    isLymphocyte_bund = 0;
 else
-    isLymphocyte_bund = (predict(lympModel,nucFeatures_bund(:,1:7)))==1;
-    lympCentroids_bund=nucleiCentroids_bund(isLymphocyte_bund==1,:);
-    nonLympCentroids_bund=nucleiCentroids_bund(isLymphocyte_bund~=1,:);
-    nucAreas_bund=nucFeatures_bund(:,1);
-    lympAreas_bund=nucAreas_bund(isLymphocyte_bund==1);
-    [spaFeat_bund]=getSpaTILFeatures(lympCentroids_bund,nonLympCentroids_bund);
-    [denFeat_bund]=getDenTILFeatures(I,lympCentroids_bund,nonLympCentroids_bund,lympAreas_bund);
-    [ctxFeat_bund]=getContextTILFeatures(nucleiCentroids_bund,nucAreas_bund,nucFeatures_bund(:,2),nucFeatures_bund(:,8),nucFeatures_bund(:,11),nucFeatures_bund(:,5),nucFeatures_bund(:,13),nucFeatures_bund(:,14));
+    try
+        isLymphocyte_bund = (predict(lympModel,nucFeatures_bund(:,1:7)))==1;
+    catch
+        isLymphocyte_bund = 0;
+    end
+    if isLymphocyte_bund == 0
+        spaFeat_bund = zeros(1,85);
+        nucFeatures_bund = zeros(1,100);
+        denFeat_bund = zeros(1,19);
+        ctxFeat_bund = zeros(1,87);
+    else
+        lympCentroids_bund=nucleiCentroids_bund(isLymphocyte_bund==1,:);
+        nonLympCentroids_bund=nucleiCentroids_bund(isLymphocyte_bund~=1,:);
+        nucAreas_bund=nucFeatures_bund(:,1);
+        lympAreas_bund=nucAreas_bund(isLymphocyte_bund==1);
+        [spaFeat_bund]=getSpaTILFeatures(lympCentroids_bund,nonLympCentroids_bund);
+        [denFeat_bund]=getDenTILFeatures(I,lympCentroids_bund,nonLympCentroids_bund,lympAreas_bund);
+        [ctxFeat_bund]=getContextTILFeatures(nucleiCentroids_bund,nucAreas_bund,nucFeatures_bund(:,2),nucFeatures_bund(:,8),nucFeatures_bund(:,11),nucFeatures_bund(:,5),nucFeatures_bund(:,13),nucFeatures_bund(:,14));
+    end
 end
 end
