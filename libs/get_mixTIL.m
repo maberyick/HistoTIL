@@ -32,9 +32,16 @@ else
     nonLympCentroids=nucleiCentroids(isLymphocyte~=1,:);
     nucAreas=nucFeatures(:,1);
     lympAreas=nucAreas(isLymphocyte==1);
+    %% SpaTIL (v1) - 85
     [spaFeat]=getSpaTILFeatures(lympCentroids,nonLympCentroids);
+    %% denTIL (v1) - 19
     [denFeat]=getDenTILFeatures(I,lympCentroids,nonLympCentroids,lympAreas);
+    %% contextTIL (v1) - 87
     [ctxFeat]=getContextTILFeatures(nucleiCentroids,nucAreas,nucFeatures(:,2),nucFeatures(:,8),nucFeatures(:,11),nucFeatures(:,5),nucFeatures(:,13),nucFeatures(:,14));
+    %% nucFeat (v1) - 100
+    % [nucleiCentroids,nucFeatures] = getNucLocalFeatures(I,M);
+    %% spaTIL (v2) - 350
+    %% peri-nuclear Features
 end
 % Extract based on the Epistroma cells
 [nucleiCentroids_epi,nucFeatures_epi] = getNucLocalFeatures(I,M_epi);

@@ -1,6 +1,7 @@
 function feat_extraction_main(varargin)
 % Paths
-addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL'))
+%addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL'))
+addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 folder_matpatches = varargin{1};
 folder_pyepistroma = varargin{2};
 folder_matcellmask = varargin{3};
