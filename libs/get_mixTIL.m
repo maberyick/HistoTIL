@@ -1,4 +1,4 @@
-function [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,nucleiCentroids_stro,isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,nucleiCentroids_epi,isLymphocyte_epi,nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,denFeat_bund,spaFeat_bund,ctxFeat_bund] = get_mixTIL(I,ES,M,maskFile,maskEFile,maskSFile,maskBFile,ESmaskFile,SSmaskFile,EBmaskFile,lympModel)
+function [nucleiCentroids,isLymphocyte,nucFeatures,denFeat,spaFeat,ctxFeat,spaFeat_v2,perinuclear,nucleiCentroids_stro,isLymphocyte_stro,nucFeatures_stro,denFeat_stro,spaFeat_stro,ctxFeat_stro,spaFeat_v2_stro,perinuclear_stro,nucleiCentroids_epi,isLymphocyte_epi,nucFeatures_epi,denFeat_epi,spaFeat_epi,ctxFeat_epi,spaFeat_v2_epi,perinuclear_epi,nucleiCentroids_bund,isLymphocyte_bund,nucFeatures_bund,denFeat_bund,spaFeat_bund,ctxFeat_bund,spaFeat_v2_bund,perinuclear_bund] = get_mixTIL(I,ES,M,maskFile,maskEFile,maskSFile,maskBFile,ESmaskFile,SSmaskFile,EBmaskFile,lympModel)
 %GETPERINUCLEARFEATURES
 % Clean image by watershed
 % Check if the mask is already processed
@@ -26,6 +26,7 @@ if sum(sum(M)) == 0
     nucFeatures = zeros(1,100);
     denFeat = zeros(1,19);
     ctxFeat = zeros(1,87);
+    spaFeat_v2 = zeros(1,1400);
 else
     isLymphocyte = (predict(lympModel,nucFeatures(:,1:7)))==1;
     lympCentroids=nucleiCentroids(isLymphocyte==1,:);
@@ -41,7 +42,9 @@ else
     %% nucFeat (v1) - 100
     % [nucleiCentroids,nucFeatures] = getNucLocalFeatures(I,M);
     %% spaTIL (v2) - 350
+    [spaFeat_v2]=getSpaTILFeaturesv2(lympCentroids,nonLympCentroids);
     %% peri-nuclear Features
+    [perinuclear]=getPeriNuclearFeatures(I,M);
 end
 % Extract based on the Epistroma cells
 [nucleiCentroids_epi,nucFeatures_epi] = getNucLocalFeatures(I,M_epi);
@@ -70,6 +73,8 @@ else
         [spaFeat_epi]=getSpaTILFeatures(lympCentroids_epi,nonLympCentroids_epi);
         [denFeat_epi]=getDenTILFeatures(I,lympCentroids_epi,nonLympCentroids_epi,lympAreas_epi);
         [ctxFeat_epi]=getContextTILFeatures(nucleiCentroids_epi,nucAreas_epi,nucFeatures_epi(:,2),nucFeatures_epi(:,8),nucFeatures_epi(:,11),nucFeatures_epi(:,5),nucFeatures_epi(:,13),nucFeatures_epi(:,14));
+        [spaFeat_v2_epi]=getSpaTILFeaturesv2(nucleiCentroids_epi,nonLympCentroids_epi);
+        [perinuclear_epi]=getPeriNuclearFeatures(I,M_epi);
     end
 end
 % Extract based on the Stroma cells
@@ -99,6 +104,8 @@ else
         [spaFeat_stro]=getSpaTILFeatures(lympCentroids_stro,nonLympCentroids_stro);
         [denFeat_stro]=getDenTILFeatures(I,lympCentroids_stro,nonLympCentroids_stro,lympAreas_stro);
         [ctxFeat_stro]=getContextTILFeatures(nucleiCentroids_stro,nucAreas_stro,nucFeatures_stro(:,2),nucFeatures_stro(:,8),nucFeatures_stro(:,11),nucFeatures_stro(:,5),nucFeatures_stro(:,13),nucFeatures_stro(:,14));
+        [spaFeat_v2_stro]=getSpaTILFeaturesv2(nucleiCentroids_stro,nonLympCentroids_stro);
+        [perinuclear_stro]=getPeriNuclearFeatures(I,M_stro);
     end
 end
 % Extract based on the Stroma cells
@@ -128,6 +135,8 @@ else
         [spaFeat_bund]=getSpaTILFeatures(lympCentroids_bund,nonLympCentroids_bund);
         [denFeat_bund]=getDenTILFeatures(I,lympCentroids_bund,nonLympCentroids_bund,lympAreas_bund);
         [ctxFeat_bund]=getContextTILFeatures(nucleiCentroids_bund,nucAreas_bund,nucFeatures_bund(:,2),nucFeatures_bund(:,8),nucFeatures_bund(:,11),nucFeatures_bund(:,5),nucFeatures_bund(:,13),nucFeatures_bund(:,14));
+        [spaFeat_v2_bund]=getSpaTILFeaturesv2(nucleiCentroids_bund,nonLympCentroids_bund);
+        [perinuclear_bund]=getPeriNuclearFeatures(I,M_bund);
     end
 end
 end

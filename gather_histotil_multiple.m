@@ -1,17 +1,17 @@
 % Gather the features and ave for each cohort
 %% add path of the dependencies
 % Windows
-addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL\'))
+%addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL\'))
 % Linux
-%addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
+addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 %% paths and names
 cohort_name = 'AZ';
 % Windows
-folder_matpatches = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\dataset_output\'];
-save_path_full = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\'];
+%folder_matpatches = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\dataset_output\'];
+%save_path_full = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\'];
 % Linux
-%folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
-%save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
+folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
+save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
 folderList = dir(folder_matpatches);
 folderNames = {folderList([folderList.isdir]).name};
 folderNames = folderNames(~ismember(folderNames ,{'.','..'}));
@@ -20,12 +20,16 @@ nuc_cohort_feat = [];
 cot_cohort_feat = [];
 den_cohort_feat = [];
 spa_cohort_feat = [];
+spd_cohort_feat = [];
+per_cohort_feat = [];
 
 % Patch based
 nuc_cohort_feat_patch = [];
 cot_cohort_feat_patch = [];
 den_cohort_feat_patch = [];
 spa_cohort_feat_patch = [];
+spd_cohort_feat_patch = [];
+per_cohort_feat_patch = [];
 folderName_clean_patch = {};
 counter_patch = 1;
 %
@@ -105,6 +109,17 @@ for mm=1:length(folderNames_count)
     spat_feat_cohort_epi = [];
     spat_feat_cohort_stro = [];
     spat_feat_cohort_bund = [];
+    %
+    spat2_feat_cohort_tiss = [];
+    spat2_feat_cohort_epi = [];
+    spat2_feat_cohort_stro = [];
+    spat2_feat_cohort_bund = [];
+    %
+    perin_feat_cohort_tiss = [];
+    perin_feat_cohort_epi = [];
+    perin_feat_cohort_stro = [];
+    perin_feat_cohort_bund = [];
+    %
     for nn=1:length(sub_folderList)
         histotil_tmp = load([path_comp sub_folderList(nn).name]);
         %% gather density features
@@ -155,6 +170,56 @@ for mm=1:length(folderNames_count)
         else
             spat_feat_cohort_bund = [spat_feat_cohort_bund; zeros(1,85)];
         end
+        %% gather spatial features v2
+        if length(histotil_tmp.spaFeat_v2) == 1400
+            spat2_feat_cohort_tiss = [spat2_feat_cohort_tiss; histotil_tmp.spaFeat_v2];
+        else
+            spat2_feat_cohort_tiss = [spat2_feat_cohort_tiss; zeros(1,1400)];
+        end
+        %
+        if length(histotil_tmp.spaFeat_v2_epi) == 1400
+            spat2_feat_cohort_epi = [spat2_feat_cohort_epi; histotil_tmp.spaFeat_v2_epi];
+        else
+            spat2_feat_cohort_epi = [spat2_feat_cohort_epi; zeros(1,1400)];
+        end
+        %
+        if length(histotil_tmp.spaFeat_v2_stro) == 1400
+            spat2_feat_cohort_stro = [spat2_feat_cohort_stro; histotil_tmp.spaFeat_v2_stro];
+        else
+            spat2_feat_cohort_stro = [spat2_feat_cohort_stro; zeros(1,1400)];
+        end
+        %
+        if length(histotil_tmp.spaFeat_v2_bund) == 1400
+            spat2_feat_cohort_bund = [spat2_feat_cohort_bund; histotil_tmp.spaFeat_v2_bund];
+        else
+            spat2_feat_cohort_bund = [spat2_feat_cohort_bund; zeros(1,1400)];
+        end
+        %
+        %% gather peri-nuclear features
+        if length(histotil_tmp.spaFeat_v2) == 1400
+            perin_feat_cohort_tiss = [perin_feat_cohort_tiss; histotil_tmp.perinuclear];
+        else
+            perin_feat_cohort_tiss = [perin_feat_cohort_tiss; zeros(1,1400)];
+        end
+        %
+        if length(histotil_tmp.spaFeat_v2_epi) == 1400
+            perin_feat_cohort_epi = [perin_feat_cohort_epi; histotil_tmp.perinuclear_epi];
+        else
+            perin_feat_cohort_epi = [perin_feat_cohort_epi; zeros(1,1400)];
+        end
+        %
+        if length(histotil_tmp.spaFeat_v2_stro) == 1400
+            perin_feat_cohort_stro = [perin_feat_cohort_stro; histotil_tmp.perinuclear_stro];
+        else
+            perin_feat_cohort_stro = [perin_feat_cohort_stro; zeros(1,1400)];
+        end
+        %
+        if length(histotil_tmp.spaFeat_v2_bund) == 1400
+            perin_feat_cohort_bund = [perin_feat_cohort_bund; histotil_tmp.perinuclear_bund];
+        else
+            perin_feat_cohort_bund = [perin_feat_cohort_bund; zeros(1,1400)];
+        end
+        %
         folderName_clean_patch{counter_patch} = folderName;
         counter_patch = counter_patch+1;
     end
@@ -165,22 +230,40 @@ for mm=1:length(folderNames_count)
         dens_feat_cohort_epi, ...
         dens_feat_cohort_stro, ...
         dens_feat_cohort_bund, ...
-        'histotil','nuclei',{'tiss','epi','stro','bund'});
+        'histotil','dentil',{'tiss','epi','stro','bund'});
     %% gather Spatial features
     [spat_feat_set_all, spat_feat_name] = get_feature_set( ...
         spat_feat_cohort_tiss, ...
         spat_feat_cohort_epi, ...
         spat_feat_cohort_stro, ...
         spat_feat_cohort_bund, ...
-        'histotil','context',{'tiss','epi','stro','bund'});
+        'histotil','spatil',{'tiss','epi','stro','bund'});
+    %% gather Spatial v2 features
+    [spat2_feat_set_all, spat2_feat_name] = get_feature_set( ...
+        spat2_feat_cohort_tiss, ...
+        spat2_feat_cohort_epi, ...
+        spat2_feat_cohort_stro, ...
+        spat2_feat_cohort_bund, ...
+        'histotil','spatil2',{'tiss','epi','stro','bund'});
+    %% gather peri-nuclear features
+    [peri_feat_set_all, peri_feat_name] = get_feature_set( ...
+        perin_feat_cohort_tiss, ...
+        perin_feat_cohort_epi, ...
+        perin_feat_cohort_stro, ...
+        perin_feat_cohort_bund, ...
+        'histotil','perinuc',{'tiss','epi','stro','bund'});
     %% Gather density and spatial Patch based
     den_cohort_feat_patch = [den_cohort_feat_patch; [dens_feat_cohort_tiss dens_feat_cohort_epi dens_feat_cohort_stro dens_feat_cohort_bund]];
     spa_cohort_feat_patch = [spa_cohort_feat_patch; [spat_feat_cohort_tiss spat_feat_cohort_epi spat_feat_cohort_stro spat_feat_cohort_bund]];
+    spd_cohort_feat_patch = [spd_cohort_feat_patch; [spat2_feat_cohort_tiss spat2_feat_cohort_epi spat2_feat_cohort_stro spat2_feat_cohort_bund]];
+    per_cohort_feat_patch = [per_cohort_feat_patch; [perin_feat_cohort_tiss perin_feat_cohort_epi perin_feat_cohort_stro perin_feat_cohort_bund]];
     %% Gather the features for the cohort
     nuc_cohort_feat = [nuc_cohort_feat; nuc_feat_cohort_total];
     cot_cohort_feat = [cot_cohort_feat; contx_feat_cohort_total];
     den_cohort_feat = [den_cohort_feat; dens_feat_cohort_all];
     spa_cohort_feat = [spa_cohort_feat; spat_feat_set_all];
+    spd_cohort_feat = [spd_cohort_feat; spat2_feat_set_all];
+    per_cohort_feat = [per_cohort_feat; peri_feat_set_all];
     folderName_clean{counter} = folderName;
     counter = counter+1;
 end
@@ -296,6 +379,43 @@ for k=1:85*4
     counter=counter+1;
     varNames_spatial_inter_patch{counter} = strcat('spatial_feat_',num2str(k));
 end
+% spatial v2
+varNames_spatial2_inter = strings(1,length(spat2_feat_name));
+counter = 0;
+for k=1:length(spat2_feat_name)
+    counter=counter+1;
+    varNames_spatial2_inter{counter} = strcat('spatial2_feat_',num2str(k));
+end
+%
+fid = fopen([save_path_full cohort_name '_spatial2_features_names.txt'], 'wt');
+fprintf(fid, '%s\n', spat2_feat_name);
+fclose(fid);
+% spatial v2 Patch
+varNames_spatial2_inter_patch = strings(1,1400*4);
+counter = 0;
+for k=1:1400*4
+    counter=counter+1;
+    varNames_spatial2_inter_patch{counter} = strcat('spatial2_feat_',num2str(k));
+end
+
+% peri-nuclear
+varNames_perinuc_inter = strings(1,length(peri_feat_name));
+counter = 0;
+for k=1:length(peri_feat_name)
+    counter=counter+1;
+    varNames_perinuc_inter{counter} = strcat('perinuc_feat_',num2str(k));
+end
+%
+fid = fopen([save_path_full cohort_name '_perinuc_features_names.txt'], 'wt');
+fprintf(fid, '%s\n', peri_feat_name);
+fclose(fid);
+% peri-nuclear Patch
+varNames_perinuc_inter_patch = strings(1,37*4);
+counter = 0;
+for k=1:37*4
+    counter=counter+1;
+    varNames_perinuc_inter_patch{counter} = strcat('perinuc_feat_',num2str(k));
+end
 %% Save the feature table
 file_ID = folderNames';
 % contextual
@@ -303,25 +423,39 @@ contextual_features = array2table(cot_cohort_feat,"VariableNames",varNames_contx
 contextual_features = addvars(contextual_features,file_ID,'Before',1);
 contextual_features.file_ID = string(contextual_features.file_ID);
 % Save the tables
-writetable(contextual_features_comp,[save_path_full cohort_name '_contextual_features.csv']);
+writetable(contextual_features,[save_path_full cohort_name '_contextual_features.csv']);
 
 % nuclei
 nuclei_features = array2table(nuc_cohort_feat,"VariableNames",varNames_nucl_inter);
 nuclei_features = addvars(nuclei_features,file_ID,'Before',1);
 nuclei_features.file_ID = string(nuclei_features.file_ID);
 % Save the tables
-writetable(nuclei_features_comp,[save_path_full cohort_name '_nuclei_features.csv']);
+writetable(nuclei_features,[save_path_full cohort_name '_nuclei_features.csv']);
 
 % density
 density_features = array2table(den_cohort_feat,"VariableNames",varNames_density_inter);
 density_features = addvars(density_features,file_ID,'Before',1);
 density_features.file_ID = string(density_features.file_ID);
 % Save the tables
-writetable(density_features_comp,[save_path_full cohort_name '_density_features.csv']);
+writetable(density_features,[save_path_full cohort_name '_density_features.csv']);
 
 % spatial
 spatial_features = array2table(spa_cohort_feat,"VariableNames",varNames_spatial_inter);
 spatial_features = addvars(spatial_features,file_ID,'Before',1);
 spatial_features.file_ID = string(spatial_features.file_ID);
 % Save the tables
-writetable(spatial_features_comp,[save_path_full '/patch_based/' cohort_name '_spatial_features.csv']);
+writetable(spatial_features,[save_path_full '/patch_based/' cohort_name '_spatial_features.csv']);
+
+% spatial v2
+spatial2_features = array2table(spd_cohort_feat,"VariableNames",varNames_spatial2_inter);
+spatial2_features = addvars(spatial2_features,file_ID,'Before',1);
+spatial2_features.file_ID = string(spatial2_features.file_ID);
+% Save the tables
+writetable(spatial2_features,[save_path_full '/patch_based/' cohort_name '_spatial2_features.csv']);
+
+% peri-nuclear
+pernuc_features = array2table(per_cohort_feat,"VariableNames",varNames_perinuc_inter);
+pernuc_features = addvars(pernuc_features,file_ID,'Before',1);
+pernuc_features.file_ID = string(pernuc_features.file_ID);
+% Save the tables
+writetable(pernuc_features,[save_path_full '/patch_based/' cohort_name '_perinuclear_features.csv']);
