@@ -1,6 +1,6 @@
 function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type)
-%lympModel=load('C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat');
-lympModel=load('/home/maberyick/CCIPD_Research/Github/HistoTIL/libs/lymp_svm_matlab_wsi.mat');
+lympModel=load('C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat');
+%lympModel=load('/home/maberyick/CCIPD_Research/Github/HistoTIL/libs/lymp_svm_matlab_wsi.mat');
 lympModel = lympModel.model;
 placeholder = 'placeholder';
 % determine if single tiles (case) or folder (multiple cases)
@@ -106,10 +106,14 @@ elseif folder_type == "folder_type"
     folderList = dir(folder_matpatches);
     folderNames = {folderList([folderList.isdir]).name};
     folderNames = folderNames(~ismember(folderNames ,{'.','..'}));
-    textprogressbar('calculating histoTIL features...');fprintf('\n');
+    fprintf('\n');
+    dispstat('','init'); % One time only initialization
+    dispstat(sprintf('Begining the process...'),'keepthis','timestamp'); 
+    %textprogressbar('calculating histoTIL features...');fprintf('\n');
     for mm=1:length(folderNames)
         perct = 100*mm/length(folderNames);
-        textprogressbar(perct);
+        %textprogressbar(perct);
+        dispstat(sprintf('Progress %d%%',perct),'timestamp'); 
         folderName = folderNames{mm};
         imgList=dir([folder_matpatches folderName filesep '*.png']);
         indx = randperm(numel(imgList));
