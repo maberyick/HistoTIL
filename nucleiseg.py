@@ -80,6 +80,9 @@ def main(args):
         for folder in folder_list:
             folder_dir = os.path.splitext(folder)[0]
             folder_name = os.path.basename(folder_dir)
+            if not os.path.isdir(args.input_path + folder_name +'/'):
+                print("folder empty")
+                continue
             print(folder_name)
             if not os.path.isdir(args.output_path + folder_name):
                 os.mkdir(args.output_path + folder_name)
