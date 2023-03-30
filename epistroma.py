@@ -72,6 +72,7 @@ def main(args):
             folder_name = os.path.basename(folder_dir)
             if not os.listdir(args.output_path + folder_name +'/'):
                 print("folder empty")
+                continue
             print(folder_name)
             if not os.path.isdir(args.output_path + folder_name):
                 os.mkdir(args.output_path + folder_name)
