@@ -1,4 +1,12 @@
 function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type)
+% counter for process at least 20 tiles
+z_val = 1.96;
+p_val = 0.5;
+e_val = 0.05;
+b = (z_val^2)*(p_val*(1-p_val));
+c = e_val^2;
+a = b/c;
+e = (z_val^2)*p_val*(1-p_val);
 lympModel=load('C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat');
 %lympModel=load('/home/maberyick/CCIPD_Research/Github/HistoTIL/libs/lymp_svm_matlab_wsi.mat');
 lympModel = lympModel.model;
@@ -124,7 +132,11 @@ elseif folder_type == "folder_type"
         qualityredChannelLim = quality.redChannelLim;
         qualityblurLimit = quality.blurLimit;
         qualityimgarea = quality.imgarea;
-        parfor nn=1:numFiles
+        % counter for process at least 20 tiles
+        f = numFiles*e_val^2;
+        d = 1+e/f;
+        sample_size = round(a/d);
+        parfor nn=1:sample_size
             i= indx(nn);
             [~,imgName]=fileparts(imgList.Value{i});
             outputFolder=[folder_savepath 'dataset_output' filesep folderName];
