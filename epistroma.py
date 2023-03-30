@@ -68,10 +68,10 @@ def main(args):
         # list of the folders (cohorts)
         folder_list = utils.all_files_under(args.input_wsi)
         for folder in folder_list:
-            if not os.listdir(folder):
-                print("folder empty")
             folder_dir = os.path.splitext(folder)[0]
             folder_name = os.path.basename(folder_dir)
+            if not os.listdir(args.output_path + folder_name +'/'):
+                print("folder empty")
             print(folder_name)
             if not os.path.isdir(args.output_path + folder_name):
                 os.mkdir(args.output_path + folder_name)
