@@ -27,6 +27,7 @@ if sum(sum(M)) == 0
     denFeat = zeros(1,19);
     ctxFeat = zeros(1,87);
     spaFeat_v2 = zeros(1,1400);
+    perinuclear = zeros(1,37);
 else
     isLymphocyte = (predict(lympModel,nucFeatures(:,1:7)))==1;
     lympCentroids=nucleiCentroids(isLymphocyte==1,:);
@@ -53,6 +54,8 @@ if sum(sum(M_epi)) == 0
     nucFeatures_epi = zeros(1,100);
     denFeat_epi = zeros(1,19);
     ctxFeat_epi = zeros(1,87);
+    spaFeat_v2_epi = zeros(1,1400);
+    perinuclear_epi = zeros(1,37);
     isLymphocyte_epi = 0;
 else
     try
@@ -65,6 +68,8 @@ else
         spaFeat_epi = zeros(1,85);
         denFeat_epi = zeros(1,19);
         ctxFeat_epi = zeros(1,87);
+        spaFeat_v2_epi = zeros(1,1400);
+        perinuclear_epi = zeros(1,37);
     else
         lympCentroids_epi=nucleiCentroids_epi(isLymphocyte_epi==1,:);
         nonLympCentroids_epi=nucleiCentroids_epi(isLymphocyte_epi~=1,:);
@@ -84,6 +89,8 @@ if sum(sum(M_stro)) == 0
     nucFeatures_stro = zeros(1,100);
     denFeat_stro = zeros(1,19);
     ctxFeat_stro = zeros(1,87);
+    spaFeat_v2_stro = zeros(1,1400);
+    perinuclear_stro = zeros(1,37);
     isLymphocyte_stro = 0;
 else
     try
@@ -96,6 +103,8 @@ else
         nucFeatures_stro = zeros(1,100);
         denFeat_stro = zeros(1,19);
         ctxFeat_stro = zeros(1,87);
+        spaFeat_v2_stro = zeros(1,1400);
+        perinuclear_stro = zeros(1,37);
     else
         lympCentroids_stro=nucleiCentroids_stro(isLymphocyte_stro==1,:);
         nonLympCentroids_stro=nucleiCentroids_stro(isLymphocyte_stro~=1,:);
@@ -115,6 +124,8 @@ if sum(sum(M_bund)) == 0
     nucFeatures_bund = zeros(1,100);
     denFeat_bund = zeros(1,19);
     ctxFeat_bund = zeros(1,87);
+    spaFeat_v2_bund = zeros(1,1400);
+    perinuclear_bund = zeros(1,37);
     isLymphocyte_bund = 0;
 else
     try
@@ -127,6 +138,8 @@ else
         nucFeatures_bund = zeros(1,100);
         denFeat_bund = zeros(1,19);
         ctxFeat_bund = zeros(1,87);
+        spaFeat_v2_bund = zeros(1,1400);
+        perinuclear_bund = zeros(1,37);
     else
         lympCentroids_bund=nucleiCentroids_bund(isLymphocyte_bund==1,:);
         nonLympCentroids_bund=nucleiCentroids_bund(isLymphocyte_bund~=1,:);
