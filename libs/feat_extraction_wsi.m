@@ -132,10 +132,15 @@ elseif folder_type == "folder_type"
         qualityredChannelLim = quality.redChannelLim;
         qualityblurLimit = quality.blurLimit;
         qualityimgarea = quality.imgarea;
-        % counter for process at least 20 tiles
+        % once feature extraction is improved, used this to account for the
+        % number of samples needed per image
         f = numFiles*e_val^2;
         d = 1+e/f;
         sample_size = round(a/d);
+        % counter for process at least 28 tiles if higher than 30
+        if sample_size > 30
+            sample_size = 28;
+        end
         parfor nn=1:sample_size
             i= indx(nn);
             [~,imgName]=fileparts(imgList.Value{i});
@@ -148,6 +153,12 @@ elseif folder_type == "folder_type"
             SSmaskFolder=[outputFolder filesep 'png_binmask' filesep 'png_stromask'];
             EBmaskFolder=[outputFolder filesep 'png_binmask' filesep 'png_boundaryepistromask'];
             featlocFolder=[outputFolder filesep 'TIL_features'];
+            % if image has already the patches, then skip to next case
+            file_count = dir([featlocFolder filesep '*.mat']);
+            file_count = numel(file_count);
+            if file_count > 25
+                continue
+            end
             %disp(outputFolder)
             [~,~] = mkdir(outputFolder);
             [~,~] = mkdir(maskFolder);
