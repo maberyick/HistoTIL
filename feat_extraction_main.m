@@ -16,10 +16,10 @@ folder_type = varargin{5};
 %folder_type = 'tile_type';
 
 % tmp windows
-folder_matpatches = 'D:\Projects\SCLC\roswell\batch_a\tiles\';
-folder_pyepistroma = 'D:\Projects\SCLC\roswell\batch_a\epimask\';
-folder_matcellmask = 'D:\Projects\SCLC\roswell\batch_a\nucleimask\';
-folder_savepath = 'D:\Projects\SCLC\roswell\batch_a\histotil_features\';
+folder_matpatches = 'D:\Projects\SCLC\roswell\batch_b\tiles\';
+folder_pyepistroma = 'D:\Projects\SCLC\roswell\batch_b\epimask\';
+folder_matcellmask = 'D:\Projects\SCLC\roswell\batch_b\nucleimask\';
+folder_savepath = 'D:\Projects\SCLC\roswell\batch_b\histotil_features\';
 folder_type = 'folder_type';
 
 % Quality parameters for Nuclear and peri-nuclear features

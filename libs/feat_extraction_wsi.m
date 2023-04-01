@@ -138,9 +138,9 @@ elseif folder_type == "folder_type"
         d = 1+e/f;
         sample_size = round(a/d);
         % counter for process at least 28 tiles if higher than 30
-        if sample_size > 30
-            sample_size = 28;
-        end
+        %if sample_size > 30
+        %    sample_size = 28;
+        %end
         parfor nn=1:sample_size
             i= indx(nn);
             [~,imgName]=fileparts(imgList.Value{i});
@@ -156,7 +156,7 @@ elseif folder_type == "folder_type"
             % if image has already the patches, then skip to next case
             file_count = dir([featlocFolder filesep '*.mat']);
             file_count = numel(file_count);
-            if file_count > 25
+            if file_count > sample_size-1
                 continue
             end
             %disp(outputFolder)
