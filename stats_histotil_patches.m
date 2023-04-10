@@ -1,5 +1,5 @@
 %% paths and names
-cohort_name = 'uh';
+cohort_name = 'roswell_park_b';
 % Windows
 %folder_matpatches = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\dataset_output\'];
 %save_path_full = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\'];

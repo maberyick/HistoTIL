@@ -473,13 +473,6 @@ contextual_features.file_ID = string(contextual_features.file_ID);
 % Save the tables
 writetable(contextual_features,[save_path_full cohort_name '_contextual_features.csv']);
 
-% contextual - nonTIL
-contextual_features_nontil = array2table(cot_nontil_cohort_feat,"VariableNames",varNames_contx_inter);
-contextual_features_nontil = addvars(contextual_features_nontil,file_ID,'Before',1);
-contextual_features_nontil.file_ID = string(contextual_features_nontil.file_ID);
-% Save the tables
-writetable(contextual_features_nontil,[save_path_full cohort_name '_contextual_nontil_features.csv']);
-
 % nuclei
 nuclei_features = array2table(nuc_all_cohort_feat,"VariableNames",varNames_nucl_inter);
 nuclei_features = addvars(nuclei_features,file_ID,'Before',1);
@@ -492,7 +485,7 @@ nuclei_features_nontil = array2table(nuc_nontil_cohort_feat,"VariableNames",varN
 nuclei_features_nontil = addvars(nuclei_features_nontil,file_ID,'Before',1);
 nuclei_features_nontil.file_ID = string(nuclei_features_nontil.file_ID);
 % Save the tables
-writetable(nuclei_features_nontil,[save_path_full cohort_name '_nuclei_nontil_features.csv']);
+writetable(nuclei_features,[save_path_full cohort_name '_nuclei_features.csv']);
 
 % density
 density_features = array2table(den_cohort_feat,"VariableNames",varNames_density_inter);
