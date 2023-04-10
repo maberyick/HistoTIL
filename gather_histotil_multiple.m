@@ -5,13 +5,14 @@
 % Linux
 addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 %% paths and names
-cohort_name = 'AZ';
+cohort_name = 'roswell_park_b';
 % Windows
-%folder_matpatches = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\dataset_output\'];
-%save_path_full = ['D:\Projects\PhenoTIL_IO\' cohort_name '\histotil\histotil_features\'];
+% E:\sclc\data\uh
+folder_matpatches = ['E:\sclc\data\' cohort_name '\histotil_features\dataset_output\'];
+save_path_full = ['E:\sclc\data\' cohort_name '\histotil_features\'];
 % Linux
-folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
-save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
+%folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
+%save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
 folderList = dir(folder_matpatches);
 folderNames = {folderList([folderList.isdir]).name};
 folderNames = folderNames(~ismember(folderNames ,{'.','..'}));
@@ -49,7 +50,7 @@ for mm=1:length(folderNames_count)
     path_comp = [folder_matpatches folderName filesep 'TIL_features' filesep];
     sub_folderList = dir([path_comp '*.mat']);
     if isempty(sub_folderList)
-        folderNames(m) = [];
+        folderNames(mm) = [];
         continue
     end
     for nn=1:length(sub_folderList)
@@ -319,7 +320,7 @@ for k=1:length(contx_feat_name)
     counter=counter+1;
     varNames_contx_patch{counter} = strcat('contx_feat_',num2str(k));
 end
-fid = fopen([save_path_full '/patch_based/' cohort_name '_patch_contextual_features_names.txt'], 'wt');
+fid = fopen([save_path_full cohort_name '_patch_contextual_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', contx_feat_name);
 fclose(fid);
 % nuclei
@@ -341,7 +342,7 @@ for k=1:length(nuc_feat_name)
     counter=counter+1;
     varNames_local_patch{counter} = strcat('nucl_feat_',num2str(k));
 end
-fid = fopen([save_path_full '/patch_based/' cohort_name '_patch_nuclei_features_names.txt'], 'wt');
+fid = fopen([save_path_full cohort_name '_patch_nuclei_features_names.txt'], 'wt');
 fprintf(fid, '%s\n', nuc_feat_name);
 fclose(fid);
 % density
@@ -351,9 +352,6 @@ for k=1:length(dens_feat_name)
     counter=counter+1;
     varNames_density_inter{counter} = strcat('density_feat_',num2str(k));
 end
-fid = fopen([save_path_full cohort_name '_density_features_names.txt'], 'wt');
-fprintf(fid, '%s\n', dens_feat_name);
-fclose(fid);
 % denstiy Patch
 varNames_density_inter_patch = strings(1,19*4);
 counter = 0;
@@ -444,18 +442,18 @@ spatial_features = array2table(spa_cohort_feat,"VariableNames",varNames_spatial_
 spatial_features = addvars(spatial_features,file_ID,'Before',1);
 spatial_features.file_ID = string(spatial_features.file_ID);
 % Save the tables
-writetable(spatial_features,[save_path_full '/patch_based/' cohort_name '_spatial_features.csv']);
+writetable(spatial_features,[save_path_full cohort_name '_spatial_features.csv']);
 
 % spatial v2
 spatial2_features = array2table(spd_cohort_feat,"VariableNames",varNames_spatial2_inter);
 spatial2_features = addvars(spatial2_features,file_ID,'Before',1);
 spatial2_features.file_ID = string(spatial2_features.file_ID);
 % Save the tables
-writetable(spatial2_features,[save_path_full '/patch_based/' cohort_name '_spatial2_features.csv']);
+writetable(spatial2_features,[save_path_full cohort_name '_spatial2_features.csv']);
 
 % peri-nuclear
 pernuc_features = array2table(per_cohort_feat,"VariableNames",varNames_perinuc_inter);
 pernuc_features = addvars(pernuc_features,file_ID,'Before',1);
 pernuc_features.file_ID = string(pernuc_features.file_ID);
 % Save the tables
-writetable(pernuc_features,[save_path_full '/patch_based/' cohort_name '_perinuclear_features.csv']);
+writetable(pernuc_features,[save_path_full cohort_name '_perinuclear_features.csv']);
