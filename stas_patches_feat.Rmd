@@ -1,0 +1,37 @@
+---
+title: "stas_patches_feat"
+author: "Cristian Barrera"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(ggplot2)
+library(ggprism)
+library(patchwork)
+
+#data <- read.csv("/media/maberyick/TSPS2/sclc/data/uh/histotil_features/uh_patches_information.csv")
+data <- read.csv("/media/maberyick/TSPS2/sclc/data/roswell_park_b/histotil_features/roswell_park_b_patches_information.csv")
+#data <- read.csv("/media/maberyick/TSPS2/sclc/data/uh/histotil_features/uh_patches_information.csv")
+print(data)
+# reshape
+df <- data %>% gather(key = Stats, value = Value, Number.of.patches:neces..patch.to.tile.ratio....)
+```
+
+
+```{r}
+gg <- ggplot(data = df, aes(x=reorder(file_ID, -Value), y=Value))
+
+dogs_cats <-  gg+
+  geom_bar(data = df[df$Stats == "Number.of.tiles",], stat="identity", fill="blue", alpha=0.5)+
+  geom_bar(data = df[df$Stats == "Number.of.patches",], stat="identity", fill="red", alpha=0.5)+
+  geom_point(data = df[df$Stats == "needed.patches",], stat="identity", color="darkred", shape="-", size=10)
+dogs_cats + theme(panel.background = element_blank(), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), prism.ticks.length.y = unit(10, "pt")) + ylab("Quantity") + xlab("Cases") + labs(title = "WSI patches stats - roswell_park_b Cohort")+scale_y_continuous(limits = c(0, 2000), 
+                             minor_breaks = seq(0, 2000, 50),
+                             breaks = seq(0,2000,250),
+                             guide = "prism_offset_minor")
+
+```
+
