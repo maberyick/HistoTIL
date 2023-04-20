@@ -5,7 +5,7 @@
 % Linux
 addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 %% paths and names
-cohort_name = 'roswell_park_b';
+cohort_name = 'uh';
 % Windows
 % E:\sclc\data\uh
 folder_matpatches = ['E:\sclc\data\' cohort_name '\histotil_features\dataset_output\'];
@@ -28,7 +28,9 @@ per_cohort_feat = [];
 
 % Patch based
 nuc_all_cohort_feat_patch = [];
+nuc_nontil_cohort_feat_patch = [];
 cot_all_cohort_feat_patch = [];
+cot_nontil_cohort_feat_patch = [];
 den_cohort_feat_patch = [];
 spa_cohort_feat_patch = [];
 spd_cohort_feat_patch = [];
@@ -59,7 +61,7 @@ for mm=1:length(folderNames_count)
     end
     for nn=1:length(sub_folderList)
         histotil_tmp = load([path_comp sub_folderList(nn).name]);
-        %% gather Nuclei features
+%         %% gather Nuclei features
         [nuc_all_feat_set, nuc_all_feat_name] = get_feature_set( ...
             histotil_tmp.nucFeatures, ...
             histotil_tmp.nucFeatures_epi, ...
@@ -68,11 +70,35 @@ for mm=1:length(folderNames_count)
             'histotil','nuclei',{'tiss','epi','stro','bund'});
         nuc_all_feat_cohort = [nuc_all_feat_cohort; nuc_all_feat_set];
         %% gather Nuclei features - non-TILs
+        try
+            histotil_tmp_nuc_feat_epi_nontil = histotil_tmp.nucFeatures_epi(~histotil_tmp.isLymphocyte_epi,:);
+            if isempty(histotil_tmp_nuc_feat_epi_nontil)
+                histotil_tmp_nuc_feat_epi_nontil = zeros(5,100);
+            end
+        catch
+            histotil_tmp_nuc_feat_epi_nontil = zeros(5,100);
+        end
+        try
+            histotil_tmp_nuc_feat_stro_nontil = histotil_tmp.nucFeatures_stro(~histotil_tmp.isLymphocyte_stro,:);
+            if isempty(histotil_tmp_nuc_feat_stro_nontil)
+                histotil_tmp_nuc_feat_stro_nontil = zeros(5,100);
+            end
+        catch
+            histotil_tmp_nuc_feat_stro_nontil = zeros(5,100);
+        end
+        try
+            histotil_tmp_nuc_feat_bund_nontil = histotil_tmp.nucFeatures_bund(~histotil_tmp.isLymphocyte_bund,:);
+            if isempty(histotil_tmp_nuc_feat_bund_nontil)
+                histotil_tmp_nuc_feat_bund_nontil = zeros(5,100);
+            end
+        catch
+            histotil_tmp_nuc_feat_bund_nontil = zeros(5,100);
+        end
         [nuc_nontil_feat_set, nuc_nontil_feat_name] = get_feature_set( ...
             histotil_tmp.nucFeatures(~histotil_tmp.isLymphocyte,:), ...
-            histotil_tmp.nucFeatures_epi(~histotil_tmp.isLymphocyte,:), ...
-            histotil_tmp.nucFeatures_stro(~histotil_tmp.isLymphocyte,:), ...
-            histotil_tmp.nucFeatures_bund(~histotil_tmp.isLymphocyte,:), ...
+            histotil_tmp_nuc_feat_epi_nontil, ...
+            histotil_tmp_nuc_feat_stro_nontil, ...
+            histotil_tmp_nuc_feat_bund_nontil, ...
             'histotil','nuclei',{'tiss','epi','stro','bund'});
         nuc_nontil_feat_cohort = [nuc_nontil_feat_cohort; nuc_nontil_feat_set];
         %% gather contextual features
@@ -83,12 +109,36 @@ for mm=1:length(folderNames_count)
             histotil_tmp.ctxFeat_bund, ...
             'histotil','context',{'tiss','epi','stro','bund'});
         contx_all_feat_cohort = [contx_all_feat_cohort; contx_all_feat_set];
-        %% gather contextual features - non-TILs
+        % gather contextual features - non-TILs
+        try
+            histotil_tmp_contx_feat_epi_nontil = histotil_tmp.ctxFeat_epi(~histotil_tmp.isLymphocyte_epi,:);
+            if isempty(histotil_tmp_contx_feat_epi_nontil)
+                histotil_tmp_contx_feat_epi_nontil = zeros(5,87);
+            end
+        catch
+            histotil_tmp_contx_feat_epi_nontil = zeros(5,87);
+        end
+        try
+            histotil_tmp_contx_feat_stro_nontil = histotil_tmp.ctxFeat_stro(~histotil_tmp.isLymphocyte_stro,:);
+            if isempty(histotil_tmp_contx_feat_stro_nontil)
+                histotil_tmp_contx_feat_stro_nontil = zeros(5,87);
+            end
+        catch
+            histotil_tmp_contx_feat_stro_nontil = zeros(5,87);
+        end
+        try
+            histotil_tmp_contx_feat_bund_nontil = histotil_tmp.ctxFeat_bund(~histotil_tmp.isLymphocyte_bund,:);
+            if isempty(histotil_tmp_contx_feat_bund_nontil)
+                histotil_tmp_contx_feat_bund_nontil = zeros(5,87);
+            end
+        catch
+            histotil_tmp_contx_feat_bund_nontil = zeros(5,87);
+        end
         [contx_nontil_feat_set, contx_nontil_feat_name] = get_feature_set( ...
             histotil_tmp.ctxFeat(~histotil_tmp.isLymphocyte,:), ...
-            histotil_tmp.ctxFeat_epi(~histotil_tmp.isLymphocyte,:), ...
-            histotil_tmp.ctxFeat_stro(~histotil_tmp.isLymphocyte,:), ...
-            histotil_tmp.ctxFeat_bund(~histotil_tmp.isLymphocyte,:), ...
+            histotil_tmp_contx_feat_epi_nontil, ...
+            histotil_tmp_contx_feat_stro_nontil, ...
+            histotil_tmp_contx_feat_bund_nontil, ...
             'histotil','context',{'tiss','epi','stro','bund'});
         contx_nontil_feat_cohort = [contx_nontil_feat_cohort; contx_nontil_feat_set];
     end
@@ -98,7 +148,7 @@ for mm=1:length(folderNames_count)
     contx_all_feat_cohort_total = [];
     contx_nontil_feat_cohort_total = [];
     [siz_a_nuc,siz_b_nuc] = size(nuc_all_feat_cohort);
-    [siz_a_nuc_nontil,siz_b_nuc_nontil] = size(nuc_all_feat_cohort);
+    [siz_a_nuc_nontil,siz_b_nuc_nontil] = size(nuc_nontil_feat_cohort);
     [siz_a_ctx,siz_b_ctx] = size(contx_nontil_feat_cohort);
     [siz_a_ctx_nontil,siz_b_ctx_nontil] = size(contx_nontil_feat_cohort);
     stats_size = 18;
@@ -299,12 +349,12 @@ for mm=1:length(folderNames_count)
         perin_feat_cohort_stro, ...
         perin_feat_cohort_bund, ...
         'histotil','perinuc',{'tiss','epi','stro','bund'});
-    %% Gather density and spatial Patch based
+    % Gather density and spatial Patch based
     den_cohort_feat_patch = [den_cohort_feat_patch; [dens_feat_cohort_tiss dens_feat_cohort_epi dens_feat_cohort_stro dens_feat_cohort_bund]];
     spa_cohort_feat_patch = [spa_cohort_feat_patch; [spat_feat_cohort_tiss spat_feat_cohort_epi spat_feat_cohort_stro spat_feat_cohort_bund]];
     spd_cohort_feat_patch = [spd_cohort_feat_patch; [spat2_feat_cohort_tiss spat2_feat_cohort_epi spat2_feat_cohort_stro spat2_feat_cohort_bund]];
     per_cohort_feat_patch = [per_cohort_feat_patch; [perin_feat_cohort_tiss perin_feat_cohort_epi perin_feat_cohort_stro perin_feat_cohort_bund]];
-    %% Gather the features for the cohort
+    % Gather the features for the cohort
     nuc_all_cohort_feat = [nuc_all_cohort_feat; nuc_all_feat_cohort_total];
     nuc_nontil_cohort_feat = [nuc_nontil_cohort_feat; nuc_nontil_feat_cohort_total];
     cot_all_cohort_feat = [cot_all_cohort_feat; contx_all_feat_cohort_total];
@@ -326,26 +376,26 @@ varTypes = {'stat_bds_1','stat_bds_2','stat_bds_3',...
     'stat_ctd_3','stat_ctd_4','stat_ctd_5','stat_ctd_6',...
     'stat_rdz_1','stat_rdz_2','stat_rdz_3'};
 stats_size = length(varTypes);
-len_feat_name = length(nuc_all_feat_name);
+len_feat_name = length(nuc_nontil_feat_name);
 total_feats_size = stats_size*len_feat_name;
 varNames_local = strings(1,total_feats_size);
 counter = 0;
 for m=1:stats_size
-    for k=1:length(nuc_all_feat_name)
+    for k=1:length(nuc_nontil_feat_name)
         counter=counter+1;
-        varNames_local{counter} = strcat(nuc_all_feat_name{k},'_var_',num2str(k),'_',varTypes{m});
+        varNames_local{counter} = strcat(nuc_nontil_feat_name{k},'_var_',num2str(k),'_',varTypes{m});
     end
 end
 
 % contextual
-len_feat_name = length(contx_all_feat_name);
+len_feat_name = length(contx_nontil_feat_name);
 total_feats_size = stats_size*len_feat_name;
 varNames_contx = strings(1,total_feats_size);
 counter = 0;
 for m=1:stats_size
-    for k=1:length(contx_all_feat_name)
+    for k=1:length(contx_nontil_feat_name)
         counter=counter+1;
-        varNames_contx{counter} = strcat(contx_all_feat_name{k},'_var_',num2str(k),'_',varTypes{m});
+        varNames_contx{counter} = strcat(contx_nontil_feat_name{k},'_var_',num2str(k),'_',varTypes{m});
     end
 end
 %% Save the feature names and make them interpretable
@@ -462,7 +512,7 @@ for k=1:37*4
     counter=counter+1;
     varNames_perinuc_inter_patch{counter} = strcat('perinuc_feat_',num2str(k));
 end
-%% Save the feature table
+% Save the feature table
 file_ID = folderNames';
 % contextual
 contextual_features = array2table(cot_all_cohort_feat,"VariableNames",varNames_contx_inter);
