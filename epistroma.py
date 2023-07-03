@@ -7,6 +7,9 @@ from PIL import Image
 import numpy as np
 from timeit import default_timer as timer
 import argparse
+import pandas as pd
+
+
 from histomicstk.preprocessing.color_normalization.\
     deconvolution_based_normalization import deconvolution_based_normalization
     
@@ -40,7 +43,7 @@ def main(args):
         names = utils.all_files_under(args.input_path,'.png')
         for name in names:
             print(name)
-            savingName = args.output_path + os.path.basename(name)[:-4]
+            savingName = os.path.join(args.output_path, os.path.basename(name)[:-4])
             if os.path.isfile(savingName):
                 print('file existed, continue to next')
                 continue
@@ -74,13 +77,50 @@ def main(args):
                 print("folder empty")
                 continue
             print(folder_name)
-            if not os.path.isdir(args.output_path + folder_name):
-                os.mkdir(args.output_path + folder_name)
+            if not os.path.isdir(os.path.join(args.output_path, folder_name)):
+                os.mkdir(os.path.join((args.output_path, folder_name)))
             # loop through the files of each folder
             names = utils.all_files_under(args.input_path+folder_name,'.png')
             for name in names:
                 print(name)
-                savingName = args.output_path + folder_name +'/'+ os.path.basename(name)[:-4]+'.png'
+                savingName = os.path.join(args.output_path, folder_name, os.path.basename(name)[:-4]+'.png')
+                if os.path.isfile(savingName):
+                    print('file existed, continue to next')
+                    continue
+                image = Image.open(name)
+                print(np.shape(image))
+                image = image.resize((2000,2000), Image.ANTIALIAS) 
+                print('predicting on image ', name)
+                image = np.expand_dims(image, axis=0)
+                print(np.shape(image))
+                samples = sess.run(tf.get_default_graph().get_tensor_by_name('g_/Sigmoid:0'), \
+                        feed_dict={tf.get_default_graph().get_tensor_by_name('image:0'): image})
+                samples = np.squeeze(samples*255.0).astype(np.uint8)
+                # save as png file
+                image = Image.fromarray(samples)
+                image.save(savingName, format='PNG')
+    elif args.cohort_type == 'tsv_list':
+        # list of the folders (cohorts)
+        wsi_file_list = pd.read_csv(args.wsi_file_list, delimiter='\t')
+        files = wsi_file_list['File'].tolist()
+        print(f'{len(files)} files have been read.')
+    
+        #folder_list = utils.all_files_under(args.input_wsi)
+        for file in files:
+            folder_dir = os.path.splitext(file)[0]
+            folder_name = os.path.basename(folder_dir)
+            print(os.path.join(args.input_path, folder_name))
+            if not os.path.isdir(os.path.join(args.input_path, folder_name)):
+                print("folder empty")
+                continue
+            print(folder_name)
+            if not os.path.isdir(os.path.join(args.output_path, folder_name)):
+                os.mkdir(os.path.join(args.output_path, folder_name))
+            # loop through the files of each folder
+            names = utils.all_files_under(os.path.join(args.input_path,folder_name),'.png')
+            for name in names:
+                print(name)
+                savingName = os.path.join(args.output_path, folder_name, os.path.basename(name)[:-4]+'.png')
                 if os.path.isfile(savingName):
                     print('file existed, continue to next')
                     continue
@@ -97,13 +137,16 @@ def main(args):
                 image = Image.fromarray(samples)
                 image.save(savingName, format='PNG')
 
+
     
 ### Working paths
 parser = argparse.ArgumentParser(description='configuration for running the Epithelium-Stroma segmentation')
 parser.add_argument('--input_wsi', type=str, default='./testimage/wsi/', help='input directory of the wsi (folder option)')
 parser.add_argument('--input_path', type=str, default='./testimage/patch/', help='input directory of the images (patch option)')
 parser.add_argument('--output_path', type=str, default='./testimage/epimask/', help='output directory for epistroma mask')
-parser.add_argument('--cohort_type', type=str, default='patch', help='Choose between patch or folder. running on a single folder (/cohort/*.png) of png images or a directory of folders (e.g. /cohorts/cohort1/*.png')
+parser.add_argument('--cohort_type', type=str, default='patch', help='Choose between patch, folder and tsv_list. running on a single folder (/cohort/*.png) of png images or a directory of folders (e.g. /cohorts/cohort1/*.png, or type tsv list, which has the list of the WSI images.')
+### Added for including a tsv files
+parser.add_argument('--wsi_file_list', type=str, default='./testimage/wsi_file_list.tsv', help='path to the TSV file containing the list of wsi file paths and names')
 
 args = parser.parse_args()
 

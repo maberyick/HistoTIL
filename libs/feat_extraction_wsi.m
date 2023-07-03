@@ -7,7 +7,8 @@ b = (z_val^2)*(p_val*(1-p_val));
 c = e_val^2;
 a = b/c;
 e = (z_val^2)*p_val*(1-p_val);
-lympModel=load('C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat');
+lympModel=load([pwd '.\libs\lymp_svm_matlab_wsi.mat']);
+%lympModel=load('C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat');
 %lympModel=load('/home/maberyick/CCIPD_Research/Github/HistoTIL/libs/lymp_svm_matlab_wsi.mat');
 lympModel = lympModel.model;
 placeholder = 'placeholder';
@@ -138,9 +139,9 @@ elseif folder_type == "folder_type"
         d = 1+e/f;
         sample_size = round(a/d);
         % counter for process at least 28 tiles if higher than 30
-        %if sample_size > 30
-        %    sample_size = 28;
-        %end
+        if sample_size > 30
+            sample_size = 28;
+        end
         parfor nn=1:sample_size
             i= indx(nn);
             [~,imgName]=fileparts(imgList.Value{i});
