@@ -29,7 +29,7 @@ def update_metadata(tiff_path):
         # Save the updated metadata to the TIFF image
         new_tiff_path = tiff_path.rstrip('.tif') + '_updated.tif'
         with tf.TiffWriter(new_tiff_path) as tif_out:
-            tif_out.save(image, description=tif.pages[0].description, metadata=metadata)
+            tif_out.write(image, description=tif.pages[0].description, metadata=metadata)
         
         print("Updated TIFF image with new metadata saved successfully.")
 
