@@ -26,7 +26,7 @@ def save_to_tsv(file_list, output_file):
 # Example usage
 root_directory = '/mnt/datas1/'  # Replace with the desired root directory
 output_filename = '/mnt/datas2/histotil/svs_files.tsv'
-extensions = ['svs', 'tif', 'ti']  # Add or remove extensions as needed
+extensions = ['svs', 'tif', 'tiff']  # Add or remove extensions as needed
 
 files_with_extensions = get_files_with_extensions(root_directory, extensions)
 save_to_tsv(files_with_extensions, output_filename)
