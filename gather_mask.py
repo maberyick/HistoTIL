@@ -24,9 +24,13 @@ def save_to_csv(file_names, csv_file):
             writer.writerow([file_name])
 
 # Example usage
-source_folder = r'E:\Tools\histoqc\histoqc_output_20230614-141029'
-destination_folder = r'E:\wsi_data\tissue_mask'
-csv_file = r'E:\wsi_data\tissue_mask_filename_list.csv'
+#source_folder = r'E:\Tools\histoqc\histoqc_output_20230614-141029'
+#destination_folder = r'E:\wsi_data\tissue_mask'
+#csv_file = r'E:\wsi_data\tissue_mask_filename_list.csv'
+
+source_folder = '/mnt/datas1/'
+destination_folder = '/mnt/datas2/histotil/glass_mask/yale/'
+csv_file = '/mnt/datas2/histotil/yale_svs_files.csv'
 
 copied_files = find_and_copy_files(source_folder, destination_folder)
 save_to_csv(copied_files, csv_file)
