@@ -99,7 +99,7 @@ def startPatchExtraction(ind, files, args):
                 coord_text2 = [cenX-(mask_tile_size//2)+2, cenY-(mask_tile_size//2)+2]
                 if ImageStat.Stat(maskRegion).mean[0] > args.min_cellular_density:
                     tile = dz.get_tile(dzLevel, (i, j)).convert("RGB")
-                    if args.img_reize == 1:
+                    if args.img_resize == 1:
                         tile.resize((args.img_resize_value,args.img_resize_value)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
                     else:
                         tile.resize((args.tile_size,args.tile_size)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
