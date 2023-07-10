@@ -6,7 +6,7 @@ def update_metadata(tiff_path):
     with tf.TiffFile(tiff_path) as tif:
         # Read the image and metadata
         image = tif.asarray()
-        metadata = tif.pages[0].tags
+        metadata = dict(tif.pages[0].tags)  # Convert metadata to a dictionary
         
         # Check and update 'Magnification' metadata
         if 'Magnification' in metadata:
