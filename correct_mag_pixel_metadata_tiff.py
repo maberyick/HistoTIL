@@ -26,10 +26,13 @@ def update_metadata(tiff_path):
             if pixel_height == 'Unknown' or not isinstance(pixel_height, (int, float)):
                 metadata['Pixel height'] = 0.25
         
+        # Convert metadata keys to strings
+        metadata = {str(key): value for key, value in metadata.items()}
+        
         # Save the updated metadata to the TIFF image
         new_tiff_path = tiff_path.rstrip('.tif') + '_updated.tif'
         with tf.TiffWriter(new_tiff_path) as tif_out:
-            tif_out.write(image, description=tif.pages[0].description, metadata=metadata)
+            tif_out.write(image, description=str(tif.pages[0].description), metadata=metadata)
         
         print("Updated TIFF image with new metadata saved successfully.")
 
