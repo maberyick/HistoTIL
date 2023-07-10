@@ -63,3 +63,4 @@ testimage/nucleimask/2016909224/2016909224_r6144_c8192.png
 testimage/nucleimask/2016909224/2016909224_r8192_c2048.png
 testimage/nucleimask/2016909224/2016909224_r8192_c8192.png
 histoTIL_env.tar.gz
+*.tar
