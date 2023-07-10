@@ -28,7 +28,7 @@ def save_to_csv(file_names, csv_file):
 #destination_folder = r'E:\wsi_data\tissue_mask'
 #csv_file = r'E:\wsi_data\tissue_mask_filename_list.csv'
 
-source_folder = '/mnt/datas1/'
+source_folder = '/mnt/datas1/histotil/histoqc/yale/'
 destination_folder = '/mnt/datas2/histotil/glass_mask/yale/'
 csv_file = '/mnt/datas2/histotil/yale_svs_files.csv'
 
