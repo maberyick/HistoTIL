@@ -14,8 +14,9 @@ import numpy as np
 
 def main(args):
     wsi_file_list = pd.read_csv(args.wsi_file_list, delimiter='\t')
+    print(wsi_file_list.tolist())
     #files = wsi_file_list['File'].tolist()
-    files = wsi_file_list.tolist()
+    files = wsi_file_list['File'].tolist()
     print(f'{len(files)} files have been read.')
     if args.end_ind == -1:
         args.end_ind = len(files)-1
