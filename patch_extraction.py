@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 
 def main(args):
-    wsi_file_list = pd.read_csv(args.wsi_file_list, delimiter=)
+    wsi_file_list = pd.read_csv(args.wsi_file_list, delimiter='\t')
     #files = wsi_file_list['File'].tolist()
     files = wsi_file_list.tolist()
     print(f'{len(files)} files have been read.')
