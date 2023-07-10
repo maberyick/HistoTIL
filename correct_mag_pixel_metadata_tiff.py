@@ -26,8 +26,8 @@ def update_metadata(tiff_path):
             if pixel_height == 'Unknown' or not isinstance(pixel_height, (int, float)):
                 metadata['Pixel height'] = 0.25
         
-        # Convert metadata keys to strings
-        metadata = {str(key): value for key, value in metadata.items()}
+        # Remove TiffTag objects from metadata
+        metadata = {key: value for key, value in metadata.items() if not isinstance(value, tf.TiffTag)}
         
         # Save the updated metadata to the TIFF image
         new_tiff_path = tiff_path.rstrip('.tif') + '_updated.tif'
