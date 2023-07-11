@@ -143,9 +143,9 @@ elseif folder_type == "folder_type"
         d = 1+e/f;
         sample_size = round(a/d);
         % counter for process at least 28 tiles if higher than 30
-        if sample_size > 30
-            sample_size = 28;
-        end
+        %if sample_size > 30
+        %    sample_size = 28;
+        %end
         parfor nn=1:sample_size
             i= indx(nn);
             [~,imgName]=fileparts(imgList.Value{i});
