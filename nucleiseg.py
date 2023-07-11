@@ -109,7 +109,8 @@ def main(args):
                 image.save(savingName, format='PNG')
     elif args.cohort_type == 'tsv_list':
         # list of the folders (cohorts)
-        wsi_file_list = pd.read_csv(args.wsi_file_list, delimiter='\t')
+        columns = ['File']
+        wsi_file_list = pd.read_csv(args.wsi_file_list, delimiter='\t', header=None, names=columns)
         files = wsi_file_list['File'].tolist()
         print(f'{len(files)} files have been read.')
     
