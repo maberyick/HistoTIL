@@ -64,3 +64,4 @@ testimage/nucleimask/2016909224/2016909224_r8192_c2048.png
 testimage/nucleimask/2016909224/2016909224_r8192_c8192.png
 histoTIL_env.tar.gz
 *.tar
+pylib/__pycache__/utils.cpython-38.pyc
