@@ -1,12 +1,13 @@
 function feat_extraction_main(varargin)
 % Paths
-addpath(genpath('E:\Tools\HistoTIL\'))
+%addpath(genpath('E:\Tools\HistoTIL\'))
 %addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 folder_matpatches = varargin{1};
 folder_pyepistroma = varargin{2};
 folder_matcellmask = varargin{3};
 folder_savepath = varargin{4};
 folder_type = varargin{5};
+machine_type = varargin{6};
 
 % tmp linux
 %folder_matpatches = '/home/maberyick/CCIPD_Research/Github/HistoTIL/testimage/patch/';
@@ -29,5 +30,5 @@ quality.tissueLim=.1; % process the current tile only if it contains at least th
 quality.blurLimit=.2; % process the current tile only if its blurriness score is below this value
 quality.saturationLim=tileSize*20;
 quality.imgarea = 0.2*(tileSize*tileSize);
-feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type)
+feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type,machine_type)
 end
