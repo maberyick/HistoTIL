@@ -1,4 +1,4 @@
-function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type)
+function feat_extraction_wsi(folder_matpatches,folder_pyepistroma,folder_matcellmask,folder_savepath,quality,folder_type,machine_type)
 % counter for process at least 20 tiles
 z_val = 1.96;
 p_val = 0.5;
