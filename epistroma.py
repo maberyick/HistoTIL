@@ -115,20 +115,20 @@ def main(args):
         for file in files:
             folder_dir = os.path.splitext(file)[0]
             folder_name = os.path.basename(folder_dir)
-            print(os.path.join(args.input_path, folder_name))
+            #print(os.path.join(args.input_path, folder_name))
             if not os.path.isdir(os.path.join(args.input_path, folder_name)):
-                print("folder empty")
+                #print("folder empty")
                 continue
-            print(folder_name)
+            #print(folder_name)
             if not os.path.isdir(os.path.join(args.output_path, folder_name)):
                 os.mkdir(os.path.join(args.output_path, folder_name))
             # loop through the files of each folder
             names = utils.all_files_under(os.path.join(args.input_path,folder_name),'.png')
             for name in names:
-                print(name)
+                #print(name)
                 savingName = os.path.join(args.output_path, folder_name, os.path.basename(name)[:-4]+'.png')
                 if os.path.isfile(savingName):
-                    print('file existed, continue to next')
+                    #print('file existed, continue to next')
                     continue
                 image = Image.open(name)
                 print(np.shape(image))
