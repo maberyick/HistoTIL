@@ -128,6 +128,7 @@ elseif folder_type == "folder_type"
     shuffledFolderNames = folderNames(shuffledIndices);
     for mm=1:length(folderNames)
         perct = 100*mm/length(folderNames);
+        perct = round(perct,2);
         %textprogressbar(perct);
         dispstat(sprintf('Progress %d%%',perct),'timestamp'); 
         folderName = folderNames{mm};

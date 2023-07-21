@@ -26,7 +26,9 @@ def startPatchExtraction(ind, files, args):
     font = ImageFont.truetype(font="./pylib/Arca-Heavy.ttf", size=14)
     fill_color = (255, 255, 255)
     stroke_color = (0, 0, 0)
-    maskFname = os.path.basename(files[ind])[:-4] + '.png'
+    base_filename = os.path.basename(files[ind])
+    filename_without_extension = os.path.splitext(base_filename)[0]
+    maskFname = filename_without_extension + '.png'
     print(files[ind])
     maskPath = os.path.join(args.mask_path, maskFname)
     baseFname = os.path.splitext(os.path.basename(maskFname))[0]
