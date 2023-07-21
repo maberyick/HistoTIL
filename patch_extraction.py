@@ -32,11 +32,13 @@ def startPatchExtraction(ind, files, args):
     baseFname = os.path.splitext(os.path.basename(maskFname))[0]
     print('Image number: %s, Out of: %s, Image ID: %s' % (ind+1, len(files), baseFname))
     #print('Image number: %s, Out of: %s, Saving path: %s, Image ID: %s, From the path: %s' % (ind+1, len(files), args.output_path, baseFname, files[ind]))
-    if os.path.exists(os.path.join(args.output_path, baseFname)):
-        print("Path exists")
-        return
-    else:
-        os.makedirs(os.path.join(args.output_path, baseFname))
+
+    if args.save_summary_only == 0:
+        if os.path.exists(os.path.join(args.output_path, baseFname)):
+            print("Path exists")
+            return
+        else:
+            os.makedirs(os.path.join(args.output_path, baseFname))
     #slideFname = os.path.join(args.input_path, baseFname + '.' + args.ext)
     #slideFname = os.path.join(files[ind])
     slideFname = files[ind]
