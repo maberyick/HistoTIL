@@ -10,7 +10,7 @@ def find_and_copy_files(source_folder, destination_folder, extensions):
             for file in files:
                 if file.endswith(f'.{ext}_mask_use.png'):
                     source_path = os.path.join(root, file)
-                    new_file_name = file.replace(f'.{ext}_mask_use.png', f'.{ext}')
+                    new_file_name = file.replace(f'.{ext}_mask_use.png')
                     destination_path = os.path.join(destination_folder, new_file_name)
                     shutil.copy2(source_path, destination_path)
                     copied_files.append(new_file_name)
