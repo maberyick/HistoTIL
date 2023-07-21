@@ -76,62 +76,59 @@ def startPatchExtraction(ind, files, args):
     wsi_tiss_per = []
     wsi_coord_x = []; wsi_coord_y = []
     wsi_coord_r = []; wsi_coord_c = []
-    
-    if args.save_summary_only == 1:
-        img_patch.save(args.output_path+'/patch_summary/'+baseFname+'.png', format='PNG')
-        slide.close()
-    else:
-        # use the tracking bar
-        with alive_bar(dz.level_tiles[dzLevel][0]*dz.level_tiles[dzLevel][1], title=f'Extracting patches from {baseFname}') as bar:
-            # loop through the i and j (positions) of the WSI
-            for i in range(dz.level_tiles[dzLevel][0]):
-                for j in range(dz.level_tiles[dzLevel][1]):
-                    bar()
-                    coord = dz.get_tile_coordinates(dzLevel, (i, j))     
-                    # if the patch is not square (given dimension), continue
-                    if coord[2] != (args.tile_size, args.tile_size):
-                        total_counter += 1
-                        continue
+
+    # use the tracking bar
+    with alive_bar(dz.level_tiles[dzLevel][0]*dz.level_tiles[dzLevel][1], title=f'Extracting patches from {baseFname}') as bar:
+        # loop through the i and j (positions) of the WSI
+        for i in range(dz.level_tiles[dzLevel][0]):
+            for j in range(dz.level_tiles[dzLevel][1]):
+                bar()
+                coord = dz.get_tile_coordinates(dzLevel, (i, j))     
+                # if the patch is not square (given dimension), continue
+                if coord[2] != (args.tile_size, args.tile_size):
+                    total_counter += 1
+                    continue
+                else:
+                    coord = coord[0]
+                cenX = (coord[0]+args.tile_size*slide.level_downsamples[args.mag_level]//2)//maskLevel
+                cenY = (coord[1]+args.tile_size*slide.level_downsamples[args.mag_level]//2)//maskLevel
+                maskRegion = mask.crop((cenX-(mask_tile_size//2), cenY-(mask_tile_size//2), cenX+(mask_tile_size//2), cenY+(mask_tile_size//2)))
+                # include the text
+                label = '#'+str(counter+1)+'  '+'R'+str(j+1)+' - '+'C'+str(i+1)+'\n'+'X'+str(coord[1]+1)+'\n'+'Y'+str(coord[0]+1)+'\n'+str(round(100*ImageStat.Stat(maskRegion).mean[0]))+'%'
+                # the coordinates
+                coord_rect = [(cenX-(mask_tile_size//2), cenY-(mask_tile_size//2)), (cenX+(mask_tile_size//2), cenY+(mask_tile_size//2))]
+                coord_text1 = [cenX-(mask_tile_size//2)+3, cenY-(mask_tile_size//2)+3]
+                coord_text2 = [cenX-(mask_tile_size//2)+2, cenY-(mask_tile_size//2)+2]
+                if ImageStat.Stat(maskRegion).mean[0] > args.min_cellular_density:
+                    tile = dz.get_tile(dzLevel, (i, j)).convert("RGB")
+                    if args.img_resize == 1:
+                        tile.resize((args.img_resize_value,args.img_resize_value)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
                     else:
-                        coord = coord[0]
-                    cenX = (coord[0]+args.tile_size*slide.level_downsamples[args.mag_level]//2)//maskLevel
-                    cenY = (coord[1]+args.tile_size*slide.level_downsamples[args.mag_level]//2)//maskLevel
-                    maskRegion = mask.crop((cenX-(mask_tile_size//2), cenY-(mask_tile_size//2), cenX+(mask_tile_size//2), cenY+(mask_tile_size//2)))
-                    # include the text
-                    label = '#'+str(counter+1)+'  '+'R'+str(j+1)+' - '+'C'+str(i+1)+'\n'+'X'+str(coord[1]+1)+'\n'+'Y'+str(coord[0]+1)+'\n'+str(round(100*ImageStat.Stat(maskRegion).mean[0]))+'%'
-                    # the coordinates
-                    coord_rect = [(cenX-(mask_tile_size//2), cenY-(mask_tile_size//2)), (cenX+(mask_tile_size//2), cenY+(mask_tile_size//2))]
-                    coord_text1 = [cenX-(mask_tile_size//2)+3, cenY-(mask_tile_size//2)+3]
-                    coord_text2 = [cenX-(mask_tile_size//2)+2, cenY-(mask_tile_size//2)+2]
-                    if ImageStat.Stat(maskRegion).mean[0] > args.min_cellular_density:
-                        tile = dz.get_tile(dzLevel, (i, j)).convert("RGB")
-                        if args.img_resize == 1:
-                            tile.resize((args.img_resize_value,args.img_resize_value)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
-                        else:
-                            tile.resize((args.tile_size,args.tile_size)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
-                        counter += 1
-                        wsi_tiss_per.append(ImageStat.Stat(maskRegion).mean[0])
-                        wsi_id.append(baseFname+'_r'+str(coord[1])+'_c'+str(coord[0]))
-                        counter_id.append(counter)
-                        wsi_coord_r.append(j+1)
-                        wsi_coord_c.append(i+1)
-                        wsi_coord_x.append(coord[1]+1)
-                        wsi_coord_y.append(coord[0]+1)
-                        if ImageStat.Stat(maskRegion).mean[0] >= 0.8:
-                            img_patches.rectangle(coord_rect, fill=None, outline = (127,255,0), width=2)
-                            img_patches.text(coord_text1, label, fill=stroke_color, stroke_fill=stroke_color, font=font, spacing=2)
-                            img_patches.text(coord_text2, label, fill=fill_color, stroke_with=0, font=font, spacing=2)
-                        else:
-                            img_patches.rectangle(coord_rect, fill=None, outline = (255,215,0), width=2)
-                            img_patches.text(coord_text1, label, fill=stroke_color, stroke_fill=stroke_color, font=font, spacing=2)
-                            img_patches.text(coord_text2, label, fill=fill_color, stroke_with=0, font=font, spacing=2)
+                        tile.resize((args.tile_size,args.tile_size)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
+                    counter += 1
+                    wsi_tiss_per.append(ImageStat.Stat(maskRegion).mean[0])
+                    wsi_id.append(baseFname+'_r'+str(coord[1])+'_c'+str(coord[0]))
+                    counter_id.append(counter)
+                    wsi_coord_r.append(j+1)
+                    wsi_coord_c.append(i+1)
+                    wsi_coord_x.append(coord[1]+1)
+                    wsi_coord_y.append(coord[0]+1)
+                    if ImageStat.Stat(maskRegion).mean[0] >= 0.8:
+                        img_patches.rectangle(coord_rect, fill=None, outline = (127,255,0), width=2)
+                        img_patches.text(coord_text1, label, fill=stroke_color, stroke_fill=stroke_color, font=font, spacing=2)
+                        img_patches.text(coord_text2, label, fill=fill_color, stroke_with=0, font=font, spacing=2)
                     else:
-                        if ImageStat.Stat(maskRegion).mean[0] > args.min_cellular_density/2:
-                            label = '# NA'+'  '+'R'+str(j+1)+' - '+'C'+str(i+1)+'\n'+'X'+str(coord[1]+1)+'\n'+'Y'+str(coord[0]+1)+'\n'+str(round(100*ImageStat.Stat(maskRegion).mean[0]))+'%'
-                            img_patches.rectangle(coord_rect, fill=None, outline = (255,48,48), width=2)
-                            img_patches.text(coord_text1, label, fill=stroke_color, stroke_fill=stroke_color, font=font, spacing=2)
-                            img_patches.text(coord_text2, label, fill=fill_color, stroke_with=0, font=font, spacing=2)
-        img_patch.save(args.output_path+'/patch_summary/'+baseFname+'.png', format='PNG')
+                        img_patches.rectangle(coord_rect, fill=None, outline = (255,215,0), width=2)
+                        img_patches.text(coord_text1, label, fill=stroke_color, stroke_fill=stroke_color, font=font, spacing=2)
+                        img_patches.text(coord_text2, label, fill=fill_color, stroke_with=0, font=font, spacing=2)
+                else:
+                    if ImageStat.Stat(maskRegion).mean[0] > args.min_cellular_density/2:
+                        label = '# NA'+'  '+'R'+str(j+1)+' - '+'C'+str(i+1)+'\n'+'X'+str(coord[1]+1)+'\n'+'Y'+str(coord[0]+1)+'\n'+str(round(100*ImageStat.Stat(maskRegion).mean[0]))+'%'
+                        img_patches.rectangle(coord_rect, fill=None, outline = (255,48,48), width=2)
+                        img_patches.text(coord_text1, label, fill=stroke_color, stroke_fill=stroke_color, font=font, spacing=2)
+                        img_patches.text(coord_text2, label, fill=fill_color, stroke_with=0, font=font, spacing=2)
+        if args.save_summary_only == 0:
+            img_patch.save(args.output_path+'/patch_summary/'+baseFname+'.png', format='PNG')
         slide.close()
         df = pd.DataFrame(np.column_stack([counter_id,wsi_id,wsi_tiss_per,wsi_coord_x,wsi_coord_y,wsi_coord_r,wsi_coord_c]), columns=["Number","Patch name","Tissue percentage","WSI coord (x)", "WSI coord (y)","WSI position (row)", "WSI position (column)"])
         df.to_csv(args.output_path+'/patch_summary/'+baseFname+'_patch_list.csv', index=False)
