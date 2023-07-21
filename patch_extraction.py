@@ -31,7 +31,7 @@ def startPatchExtraction(ind, files, args):
     maskFname = filename_without_extension + '.png'
     print(files[ind])
     maskPath = os.path.join(args.mask_path, maskFname)
-    baseFname =maskPath
+    baseFname =filename_without_extension
     #baseFname = os.path.splitext(os.path.basename(maskFname))[0]
     print('Image number: %s, Out of: %s, Image ID: %s' % (ind+1, len(files), baseFname))
     #print('Image number: %s, Out of: %s, Saving path: %s, Image ID: %s, From the path: %s' % (ind+1, len(files), args.output_path, baseFname, files[ind]))
