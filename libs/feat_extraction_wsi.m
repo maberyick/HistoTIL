@@ -7,9 +7,9 @@ b = (z_val^2)*(p_val*(1-p_val));
 c = e_val^2;
 a = b/c;
 e = (z_val^2)*p_val*(1-p_val);
-if machine_type == 'linux'
+if machine_type == "linux"
     lympModel=load([pwd '/libs/lymp_svm_matlab_wsi.mat']);
-elseif machine_type == 'windows'
+elseif machine_type == "windows"
     lympModel=load([pwd '.\libs\lymp_svm_matlab_wsi.mat']);
 end
 %lympModel=load('C:\Users\cbarr23\Documents\HistoTIL\libs\lymp_svm_matlab_wsi.mat');
