@@ -189,10 +189,19 @@ elseif folder_type == "folder_type"
             curTile = imread([folder_matpatches folderName filesep imgList.Value{i}]);
             [ima,imb,~] = size(curTile);
             % load the epistroma mask
-            curTile_ESmask = imread([folder_pyepistroma folderName filesep imgList.Value{i}]);
+            try
+                curTile_ESmask = imread([folder_pyepistroma folderName filesep imgList.Value{i}]);
+            catch
+                disp('Epith/Stroma mask not found. Continue to next image')
+                continue
             [ms1a,~,~] = size(curTile_ESmask);
             % load the nuclei mask, if not saved, calculate
-            curTile_Nmask = imread([folder_matcellmask folderName filesep imgList.Value{i}]);
+            try
+                curTile_Nmask = imread([folder_matcellmask folderName filesep imgList.Value{i}]);
+            catch
+                disp('Nuclei mask not found. Continue to next image')
+                continue
+            end
             [ms2a,~,~] = size(curTile_Nmask);
             % check for size
             if ima ~= ms1a
