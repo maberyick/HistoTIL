@@ -1,6 +1,7 @@
 import os
 import csv
 import glob
+import argparse
 
 def get_files_with_extensions(root_dir, extensions):
     count = 1
@@ -23,10 +24,17 @@ def save_to_tsv(file_list, output_file):
         writer.writerow(file_list)
     print(f"File list saved to '{output_file}'.")
 
-# Example usage
-root_directory = '/mnt/datas1/'  # Replace with the desired root directory
-output_filename = '/mnt/datas2/histotil/svs_files.tsv'
-extensions = ['svs', 'tif', 'tiff']  # Add or remove extensions as needed
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Get files with extensions and save to TSV.")
+    parser.add_argument("--root_directory", type=str, help="Root directory path")
+    parser.add_argument("--output_filename", type=str, help="Output TSV file path")
+    parser.add_argument("--extensions", nargs='+', default=['svs', 'tif', 'tiff'],
+                        help="List of file extensions to search for (space-separated). Default: svs tif tiff")
+    args = parser.parse_args()
 
-files_with_extensions = get_files_with_extensions(root_directory, extensions)
-save_to_tsv(files_with_extensions, output_filename)
+    root_directory = args.root_directory
+    output_filename = args.output_filename
+    extensions = args.extensions
+
+    files_with_extensions = get_files_with_extensions(root_directory, extensions)
+    save_to_tsv(files_with_extensions, output_filename)
