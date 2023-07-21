@@ -123,6 +123,9 @@ elseif folder_type == "folder_type"
     dispstat('','init'); % One time only initialization
     dispstat(sprintf('Begining the process...'),'keepthis','timestamp'); 
     %textprogressbar('calculating histoTIL features...');fprintf('\n');
+    % Shuffle the elements randomly
+    shuffledIndices = randperm(length(folderNames));
+    shuffledFolderNames = folderNames(shuffledIndices);
     for mm=1:length(folderNames)
         perct = 100*mm/length(folderNames);
         %textprogressbar(perct);
