@@ -194,6 +194,7 @@ elseif folder_type == "folder_type"
             catch
                 disp('Epith/Stroma mask not found. Continue to next image')
                 continue
+            end
             [ms1a,~,~] = size(curTile_ESmask);
             % load the nuclei mask, if not saved, calculate
             try
