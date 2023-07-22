@@ -6,7 +6,7 @@ def delete_small_mat_files(directory, size_limit_kb):
         for file in files:
             if file.endswith(".mat"):
                 filepath = os.path.join(root, file)
-                if os.path.getsize(filepath) < size_limit_kb * 1024:
+                if os.path.getsize(filepath) < size_limit_kb * 256:
                     print(f"Deleting: {filepath}")
                     os.remove(filepath)
 
