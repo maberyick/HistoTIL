@@ -13,7 +13,7 @@ def delete_small_mat_files(directory, size_limit_kb):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Delete small .mat files")
     parser.add_argument("path", type=str, help="Base directory path")
-    parser.add_argument("--size-limit", type=int, default=1, help="Size limit in KB (default: 1)")
+    parser.add_argument("--size-limit", type=int, default=1, help="Size limit in Bytes (default: 1, size of 256 Bytes)")
 
     args = parser.parse_args()
     base_directory = args.path
