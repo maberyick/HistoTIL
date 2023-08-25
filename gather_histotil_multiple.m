@@ -1,18 +1,20 @@
 % Gather the features and ave for each cohort
 %% add path of the dependencies
 % Windows
-%addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL\'))
+addpath(genpath('C:\Users\cbarr23\Documents\HistoTIL'))
 % Linux
-addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
+%addpath(genpath('/home/maberyick/CCIPD_Research/Github/HistoTIL'))
 %% paths and names
-cohort_name = 'uh';
+cohort_name = 'ccf';
 % Windows
 % E:\sclc\data\uh
-folder_matpatches = ['E:\sclc\data\' cohort_name '\histotil_features\dataset_output\'];
-save_path_full = ['E:\sclc\data\' cohort_name '\histotil_features\'];
+% D:\Projects\HistoTIL\histotil_features\upenn
+folder_matpatches = ['D:\Projects\HistoTIL\histotil_features\' cohort_name '\dataset_output\'];
+save_path_full = ['D:\Projects\HistoTIL\histotil_features\' cohort_name '\histotil_features\'];
 % Linux
 %folder_matpatches = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/dataset_output/'];
 %save_path_full = ['/media/maberyick/Elements/CCIPD_Projects/PhenoTIL_IO/' cohort_name '/histotil/histotil_features/'];
+mkdir(save_path_full)
 folderList = dir(folder_matpatches);
 folderNames = {folderList([folderList.isdir]).name};
 folderNames = folderNames(~ismember(folderNames ,{'.','..'}));
@@ -419,7 +421,7 @@ for k=1:length(contx_all_feat_name)
     varNames_contx_patch{counter} = strcat('contx_feat_',num2str(k));
 end
 fid = fopen([save_path_full cohort_name '_patch_contextual_features_names.txt'], 'wt');
-fprintf(fid, '%s\n', contx_feat_name);
+fprintf(fid, '%s\n', contx_all_feat_name);
 fclose(fid);
 % nuclei
 varNames_nucl_inter = strings(1,length(varNames_local));
@@ -441,7 +443,7 @@ for k=1:length(nuc_all_feat_name)
     varNames_local_patch{counter} = strcat('nucl_feat_',num2str(k));
 end
 fid = fopen([save_path_full cohort_name '_patch_nuclei_features_names.txt'], 'wt');
-fprintf(fid, '%s\n', nuc_feat_name);
+fprintf(fid, '%s\n', nuc_all_feat_name);
 fclose(fid);
 % density
 varNames_density_inter = strings(1,length(dens_feat_name));

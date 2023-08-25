@@ -6,10 +6,12 @@ def is_empty_folder(folder_path):
 
 def delete_empty_subfolders(root_path):
     for folder_name in os.listdir(root_path):
-        folder_path = os.path.join(root_path, folder_name)
+        folder_path = os.path.join(root_path, folder_name, 'TIL_features')
+        folder_path_to_delete = os.path.join(root_path, folder_name)
         if os.path.isdir(folder_path) and is_empty_folder(folder_path):
             print(f"Deleting empty subfolder: {folder_path}")
             os.rmdir(folder_path)
+            os.rmdir(folder_path_to_delete)
 
 def main():
     parser = argparse.ArgumentParser(description="Delete empty subfolders in a given path.")
