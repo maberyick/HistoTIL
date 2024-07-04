@@ -106,9 +106,14 @@ def startPatchExtraction(ind, files, args):
                     if args.save_summary_only == 0:
                         tile = dz.get_tile(dzLevel, (i, j)).convert("RGB")
                         if args.img_resize == 1:
-                            tile.resize((args.img_resize_value,args.img_resize_value)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
+                            resized_tile = tile.resize((args.img_resize_value, args.img_resize_value))
+                            tile_path = os.path.join(output_dir, baseFname + '_r' + str(coord[1]) + '_c' + str(coord[0]) + '.' + args.patch_ext)
+                            resized_tile.save(tile_path)
+                            print(f"Saved resized tile: {tile_path}")
                         else:
-                            tile.resize((args.tile_size,args.tile_size)).save(os.path.join(args.output_path,baseFname, baseFname+'_r'+str(coord[1])+'_c'+str(coord[0])+'.'+args.patch_ext))
+                            tile_path = os.path.join(output_dir, baseFname + '_r' + str(coord[1]) + '_c' + str(coord[0]) + '.' + args.patch_ext)
+                            tile.save(tile_path)
+                            print(f"Saved tile: {tile_path}")
                     counter += 1
                     wsi_tiss_per.append(ImageStat.Stat(maskRegion).mean[0])
                     wsi_id.append(baseFname+'_r'+str(coord[1])+'_c'+str(coord[0]))
@@ -146,7 +151,7 @@ parser.add_argument('--patch_ext', type=str, default='png', help='extension of t
 parser.add_argument('--min_cellular_density', type=float, default=0.4, help='Minimum value of celular density (quantity of cells (%) on a patch) required to save an image')
 parser.add_argument('--max_worker', type=int, default=16, help='Number of cores to be used')
 parser.add_argument('--tile_size', type=int, default=2048, help='Size of the patch in pixels (e.g. 20048x2048)')
-parser.add_argument('--mag_level', type=int, default=0, help='Mag. level of the image (For 40x:0, For 20x:1, For 10x:2, For 5x:3)')
+parser.add_argument('--mag_level', type=int, default=1, help='Mag. level of the image (For 40x:0, For 20x:1, For 10x:2, For 5x:3)')
 parser.add_argument('--visual_size', type=int, default=1, help='Relative size of the visual patch summary (1 = small, 2 = medium, 3 = big, 4 = large')
 parser.add_argument('--start_ind', type=int, default=0, help='Index to start the process (0 start from the first wsi image)')
 parser.add_argument('--end_ind', type=int, default=-1, help='Index to end the process (-1 ends at the last wsi image)')
